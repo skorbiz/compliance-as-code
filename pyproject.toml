@@ -1,7 +1,7 @@
 [project]
 name = "compliance-as-code"
 version = "0.1.0"
-description = "Add your description here"
+description = "Compliance documents as code POC"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -12,8 +12,4 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
-    "pytest-cov>=4.0",
 ]
-
-[tool.setuptools]
-packages = ["schemas", "compliance_tools"]

@@ -1,0 +1,69 @@
+# Risk Register - CRA Compliance
+
+metadata:
+  product_name: "Example Product"
+  version: "1.0.0"
+  assessment_date: "2026-02-11"
+  assessor: "Security Team"
+  review_date: "2026-08-11"
+  scope: "CRA compliance - software security risks"
+
+risks:
+  - id: "R001"
+    category: "data_security"
+    title: "Unauthorized access to user data"
+    description: "Attacker gains access to sensitive user data through authentication bypass"
+    threat_source: "External attacker"
+    vulnerability: "Weak encryption or access controls"
+    impact: "critical"
+    probability: "possible"
+    existing_controls:
+      - "Database encryption (AES-256)"
+      - "Role-based access control"
+    residual_risk_impact: "moderate"
+    residual_risk_probability: "unlikely"
+    additional_controls:
+      - control: "Implement field-level encryption for PII"
+        responsible: "Security team"
+        deadline: "2026-04-01"
+        status: "planned"
+    cra_requirement: "Article 13 - Cybersecurity requirements"
+
+  - id: "R002"
+    category: "access_control"
+    title: "Brute force attack on authentication"
+    description: "Weak password policies enable credential guessing attacks"
+    threat_source: "External attacker"
+    vulnerability: "No rate limiting or account lockout"
+    impact: "critical"
+    probability: "likely"
+    existing_controls:
+      - "Password complexity requirements"
+      - "HTTPS for authentication"
+    residual_risk_impact: "moderate"
+    residual_risk_probability: "possible"
+    additional_controls:
+      - control: "Implement MFA"
+        responsible: "Development team"
+        deadline: "2026-03-30"
+        status: "in_progress"
+    cra_requirement: "Article 13(2) - Authentication mechanisms"
+
+  - id: "R003"
+    category: "software_integrity"
+    title: "Malicious software update"
+    description: "Compromised update mechanism delivers malware"
+    threat_source: "Supply chain attack"
+    vulnerability: "Unsigned updates"
+    impact: "catastrophic"
+    probability: "unlikely"
+    existing_controls:
+      - "Code signing for releases"
+    residual_risk_impact: "critical"
+    residual_risk_probability: "rare"
+    additional_controls:
+      - control: "Implement update verification"
+        responsible: "DevOps team"
+        deadline: "2026-05-01"
+        status: "planned"
+    cra_requirement: "Article 13(6) - Secure updates"
