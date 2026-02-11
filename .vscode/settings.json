@@ -1,0 +1,15 @@
+{
+  "yaml.schemas": {
+    "schemas/generated-json-schemas/risk-model.schema.json": "risk-assessment/model.yaml",
+    "schemas/generated-json-schemas/risk-register.schema.json": "risk-assessment/risks.yaml",
+    "schemas/generated-json-schemas/sbom-manual.schema.json": "software-bill-of-materials/sbom_manual.yaml",
+    "schemas/generated-json-schemas/sbom-generated.schema.json": "software-bill-of-materials/sbom_generated.yaml"
+  },
+  "yaml.validate": true,
+  "yaml.completion": true,
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": [
+    "tests"
+  ]
+}

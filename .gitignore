@@ -1,3 +1,14 @@
+# Generated PDFs
+*.pdf
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.coverage
+htmlcov/
+schemas/generated-json-schemas/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

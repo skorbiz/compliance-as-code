@@ -1,0 +1,119 @@
+# Risk Assessment Model
+# Defines the severity and probability scales used in risk analysis
+
+severity_levels:
+  catastrophic:
+    value: 5
+    description: "Complete system failure, major data breach, critical safety impact"
+    color: "#8B0000"  # Dark red
+    
+  critical:
+    value: 4
+    description: "Major system disruption, significant data exposure, serious safety concerns"
+    color: "#DC143C"  # Crimson
+    
+  moderate:
+    value: 3
+    description: "Partial system disruption, limited data exposure, moderate safety impact"
+    color: "#FFA500"  # Orange
+    
+  minor:
+    value: 2
+    description: "Minor disruption, minimal data exposure, low safety impact"
+    color: "#FFD700"  # Gold
+    
+  negligible:
+    value: 1
+    description: "Insignificant impact, no data exposure, no safety impact"
+    color: "#90EE90"  # Light green
+
+probability_levels:
+  almost_certain:
+    value: 5
+    description: "Expected to occur in most circumstances (>90%)"
+    frequency: "Multiple times per year"
+    
+  likely:
+    value: 4
+    description: "Will probably occur in most circumstances (60-90%)"
+    frequency: "Once per year"
+    
+  possible:
+    value: 3
+    description: "Might occur at some time (30-60%)"
+    frequency: "Once every 1-3 years"
+    
+  unlikely:
+    value: 2
+    description: "Could occur at some time (10-30%)"
+    frequency: "Once every 3-10 years"
+    
+  rare:
+    value: 1
+    description: "May occur only in exceptional circumstances (<10%)"
+    frequency: "Less than once in 10 years"
+
+risk_levels:
+  critical:
+    threshold: 15  # Risk score >= 15
+    description: "Immediate action required - unacceptable risk"
+    color: "#8B0000"
+    action: "Must implement controls immediately"
+    
+  high:
+    threshold: 10  # Risk score >= 10 and < 15
+    description: "High priority - requires senior management attention"
+    color: "#DC143C"
+    action: "Implement controls within 30 days"
+    
+  medium:
+    threshold: 6   # Risk score >= 6 and < 10
+    description: "Medium priority - requires management attention"
+    color: "#FFA500"
+    action: "Implement controls within 90 days"
+    
+  low:
+    threshold: 3   # Risk score >= 3 and < 6
+    description: "Monitor and review - acceptable with controls"
+    color: "#FFD700"
+    action: "Review annually, implement controls as feasible"
+    
+  very_low:
+    threshold: 0   # Risk score < 3
+    description: "Acceptable risk - routine monitoring"
+    color: "#90EE90"
+    action: "Monitor as part of regular operations"
+
+# Risk categories for software/cyber security
+risk_categories:
+  - id: "data_security"
+    name: "Data Security & Privacy"
+    description: "Risks related to confidentiality, integrity, and availability of data"
+    
+  - id: "access_control"
+    name: "Access Control & Authentication"
+    description: "Risks related to unauthorized access and authentication failures"
+    
+  - id: "network_security"
+    name: "Network Security"
+    description: "Risks related to network vulnerabilities and communications"
+    
+  - id: "software_integrity"
+    name: "Software Integrity & Updates"
+    description: "Risks related to software tampering, malware, and update mechanisms"
+    
+  - id: "supply_chain"
+    name: "Supply Chain Security"
+    description: "Risks related to third-party components and dependencies"
+    
+  - id: "availability"
+    name: "System Availability & Resilience"
+    description: "Risks related to service disruption and system failures"
+    
+  - id: "compliance"
+    name: "Regulatory Compliance"
+    description: "Risks related to CRA and other regulatory requirements"
+    
+  - id: "incident_response"
+    name: "Incident Detection & Response"
+    description: "Risks related to security monitoring and incident handling"

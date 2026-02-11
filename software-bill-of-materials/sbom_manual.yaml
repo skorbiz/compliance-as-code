@@ -1,0 +1,39 @@
+# Manual SBOM entries
+# Add components that are not automatically detected here
+
+metadata:
+  product_name: "Your Product Name"
+  product_version: "1.0.0"
+  vendor: "Your Company Name"
+  release_date: "2026-02-11"
+  sbom_version: "1.0"
+
+components:
+  - name: "Typst"
+    version: "0.14.2"
+    type: "Document Compiler"
+    license: "Apache-2.0"
+    description: "Document compilation tooling"
+    supplier: "Typst GmbH"
+    
+  - name: "Python"
+    version: "3.12"
+    type: "Runtime"
+    license: "PSF"
+    description: "Python runtime environment"
+    supplier: "Python Software Foundation"
+    
+  - name: "Ubuntu"
+    version: "24.04 LTS"
+    type: "Operating System"
+    license: "Various"
+    description: "Base operating system"
+    supplier: "Canonical Ltd."
+
+  # Add additional manual components below
+  # - name: "Component Name"
+  #   version: "x.y.z"
+  #   type: "Library/Firmware/Hardware/etc"
+  #   license: "License identifier"
+  #   description: "Brief description"
+  #   supplier: "Supplier/Manufacturer name"

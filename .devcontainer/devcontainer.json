@@ -1,0 +1,43 @@
+{
+	"name": "Compliance as code devcontainer",
+	"dockerFile": "Dockerfile",
+	"context": "../..",
+	// Windows thing to make the container see file updates (required for auto updating docs)
+	"containerEnv": {
+		"CHOKIDAR_USEPOLLING": "1", // Webpack/Vite/Next/Cypress etc.
+		"CHOKIDAR_INTERVAL": "100", // (ms) tweak if needed
+		"TSC_WATCHFILE": "UseFsEventsWithFallbackDynamicPolling", // tsc --watch
+		// Alternatives if needed:
+		// "TSC_WATCHFILE": "DynamicPriorityPolling"
+		// "TSC_WATCHFILE": "UsePolling"
+		"WATCHPACK_POLLING": "true", // webpack’s file watcher
+		"WATCHPACK_POLLING_INTERVAL": "100",
+		"WATCHDOG_USE_POLLING": "true", // Python watchdog (mkdocs, flask debug, etc.)
+		"WATCHFILES_FORCE_POLLING": "1" // uvicorn/watchfiles
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"streetsidesoftware.code-spell-checker",
+				"GitHub.copilot",
+				"GitHub.copilot-labs",
+				"GitHub.copilot-chat",
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"njpwerner.autodocstring",
+				"openai.chatgpt",
+				"charliermarsh.ruff",
+				"meta.pyrefly",
+				"myriad-dreamin.tinymist"
+			]
+		}
+	},
+	"runArgs": [
+		"--network=host" 
+		// puts the container in the hosts network stack.
+		// Done so we can easily acccess docker containers running on the host machine from the devcontainer
+		// might not be best practice, so could change in the feauture
+		// see https://www.dasblinkenlichten.com/docker-networking-101-host-mode/ for some potential issues
+
+	]
+}
