@@ -68,6 +68,30 @@ Auto-generated from project dependencies:
   ..generated.components.map(c => (c.name, c.version, c.type)).flatten()
 )
 
+= License Summary
+
+#let get_license(component) = {
+  component.at("license", default: "Unknown")
+}
+
+#let manual_licenses = manual_components.map(get_license)
+#let generated_licenses = generated.components.map(get_license)
+#let all_licenses = manual_licenses + generated_licenses
+#let unique_licenses = all_licenses.dedup()
+
+#if unique_licenses.len() > 0 [
+  The following open source and commercial licenses are used by components in this product:
+  
+  #for license in unique_licenses [
+    - #license
+  ]
+  
+  #v(1em)
+  For detailed license information, please refer to the individual component documentation or contact #vendor.
+] else [
+  _License information is being compiled. Please refer to individual component documentation._
+]
+
 = Summary
 
 #let total = manual_components.len() + generated.components.len()
@@ -75,3 +99,13 @@ Auto-generated from project dependencies:
 *Total Components:* #total
 - Manual: #manual_components.len()
 - Auto-generated: #generated.components.len()
+
+
+#v(2em)
+
+#align(center)[
+  #text(size: 9pt, style: "italic")[
+    This document is automatically generated and should not be edited manually.\
+    Last generated: #datetime.today().display("[day] [month repr:long] [year]")
+  ]
+]

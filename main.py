@@ -83,22 +83,21 @@ def export_schemas() -> None:
 def main():
     parser = argparse.ArgumentParser(description="Build compliance documents")
     parser.add_argument("--all", action="store_true", help="Build all documents")
-    parser.add_argument("--validate", action="store_true", help="Validate YAML only")
-    parser.add_argument("--export-schemas", action="store_true", help="Export JSON schemas")
+    parser.add_argument("--skip-validate", action="store_true", help="Skip YAML validation")
+    parser.add_argument("--skip-export-schemas", action="store_true", help="Skip exporting JSON schemas")
     parser.add_argument("doc", nargs="?", choices=list(DOCS.keys()), help="Document to build")
     
     args = parser.parse_args()
     
-    if args.validate:
-        return 0 if validate_yaml() else 1
+    # Validate YAML files (unless skipped)
+    if not args.skip_validate:
+        if not validate_yaml():
+            print("\n⚠️  Fix YAML errors before building.")
+            return 1
     
-    if args.export_schemas:
+    # Export schemas (unless skipped)
+    if not args.skip_export_schemas:
         export_schemas()
-        return 0
-    
-    if not validate_yaml():
-        print("\n⚠️  Fix YAML errors before building.")
-        return 1
     
     if args.all:
         codes = [build_doc(name) for name in DOCS]
@@ -107,7 +106,10 @@ def main():
     if args.doc:
         return build_doc(args.doc)
     
-    parser.print_help()
+    # If no build target specified, just validation and export were done
+    if not args.all and not args.doc:
+        print("\nNo build target specified. Use --all or specify a document.")
+    
     return 0
 
 
