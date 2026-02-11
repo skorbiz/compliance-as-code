@@ -43,6 +43,13 @@ Read all safety instructions before using this product.
 + Power on the device
 + Follow on-screen setup wizard
 
+== Commissioning
+
+Before placing the product into service:
+- Verify power and network connections
+- Complete initial configuration
+- Confirm basic functionality using the on-screen checks
+
 = Operation
 
 == Basic Usage
@@ -71,3 +78,10 @@ The device is ready for use after initial setup. Use the main interface to acces
 For technical support, contact:\
 Email: support\@example.com\
 Web: https://example.com/support
+
+= Decommissioning
+
+When retiring the product:
+- Remove any stored credentials and reset to factory settings
+- Disconnect from power and networks
+- Follow local regulations for electronic waste disposal
