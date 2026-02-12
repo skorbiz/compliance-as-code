@@ -41,6 +41,15 @@ jobs:
     - name: Build documents
       run: uv run main.py
     
+    - name: Delete old release and tag
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      continue-on-error: true
+      run: |
+        gh release delete latest --yes || true
+        git push origin :refs/tags/latest || true
+      env:
+        GH_TOKEN: ${{ github.token }}
+    
     - name: Upload to Latest Release
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       uses: softprops/action-gh-release@v1
