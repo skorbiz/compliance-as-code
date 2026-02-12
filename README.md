@@ -2,7 +2,7 @@
 
 Proof-of-concept for managing compliance documents as code.
 
-[![Build and Test](https://github.com/skorbiz/compliance-as-code/actions/workflows/build-and-test.yml/badge.svg?branch=main)](https://github.com/skorbiz/compliance-as-code/actions/workflows/build-and-test.yml)
+[![Build and Test](https://github.com/skorbiz/compliance-as-code/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/skorbiz/compliance-as-code/actions/workflows/build-and-test.yml?query=branch%3Amain)
 
 ## Documents
 
@@ -16,8 +16,8 @@ Proof-of-concept for managing compliance documents as code.
 ## Quick Start
 
 ```bash
-# Build all documents (uv automatically manages dependencies)
-uv run main.py
+# Build all documents
+uv run main.py # or python main.py (if not using the uv package manager)
 
 # Build single document in watch mode
 uv run main.py ce
