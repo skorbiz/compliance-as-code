@@ -13,29 +13,23 @@ Proof-of-concept for managing compliance documents as code.
 - **[Manual (PDF)](https://github.com/skorbiz/compliance-as-code/releases/download/latest/manual.pdf)** - User manual
 - **[SBOM (PDF)](https://github.com/skorbiz/compliance-as-code/releases/download/latest/sbom.pdf)** - Software Bill of Materials (compliance document; not a replacement for CI-generated CycloneDX/SPDX SBOMs)
 
-*Note: The SBOM document is a compliance artifact. For machine-readable SBOMs, generate CycloneDX/SPDX format in your CI pipeline.*
-
 ## Quick Start
 
 ```bash
-# Setup
-uv venv && source .venv/bin/activate
-uv pip install -e ".[dev]"
-
-# Build all documents (default - validates, exports schemas, and builds)
-python main.py
+# Build all documents (uv automatically manages dependencies)
+uv run main.py
 
 # Build single document in watch mode
-python main.py ce
-python main.py risk
-python main.py manual
-python main.py sbom
+uv run main.py ce
+uv run main.py risk
+uv run main.py manual
+uv run main.py sbom
 
 # Build without validation or schema export
-python main.py --skip-validate --skip-export-schemas
+uv run main.py --skip-validate --skip-export-schemas
 
 # Run tests
-pytest tests/
+uv run pytest tests/
 ```
 
 ## Project Structure
