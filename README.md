@@ -6,14 +6,14 @@ Proof-of-concept for managing compliance documents as code.
 
 ## Documents
 
-📦 **[Download Latest Documents](https://github.com/skorbiz/compliance-as-code/actions/workflows/build-and-test.yml)** - Click the latest successful workflow run, then download the "compliance-documents" artifact
+📦 **Download Latest Documents** (automatically updated on every commit to main):
 
-The following documents are automatically built and stored as artifacts:
+- **[CE Declaration (PDF)](https://github.com/skorbiz/compliance-as-code/releases/download/latest/ce.pdf)** - EU conformity declaration
+- **[Risk Assessment (PDF)](https://github.com/skorbiz/compliance-as-code/releases/download/latest/risk-assessment.pdf)** - CRA cybersecurity risk assessment  
+- **[Manual (PDF)](https://github.com/skorbiz/compliance-as-code/releases/download/latest/manual.pdf)** - User manual
+- **[SBOM (PDF)](https://github.com/skorbiz/compliance-as-code/releases/download/latest/sbom.pdf)** - Software Bill of Materials (compliance document; not a replacement for CI-generated CycloneDX/SPDX SBOMs)
 
-- **CE Declaration** - EU conformity declaration
-- **Risk Assessment** - CRA cybersecurity risk assessment  
-- **Manual** - User manual
-- **SBOM** - Software Bill of Materials (compliance document; not a replacement for CI-generated CycloneDX/SPDX SBOMs)
+*Note: The SBOM document is a compliance artifact. For machine-readable SBOMs, generate CycloneDX/SPDX format in your CI pipeline.*
 
 ## Quick Start
 

@@ -42,12 +42,22 @@ jobs:
     - name: Build documents
       run: python main.py
     
-    - name: Upload document artifacts
-      uses: actions/upload-artifact@v4
-      if: success()
+    - name: Upload to Latest Release
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      uses: softprops/action-gh-release@v1
       with:
-        name: compliance-documents
-        path: |
-          docs/*.pdf
-        retention-days: 90
-        overwrite: true
+        tag_name: latest
+        name: Latest Documents
+        body: |
+          Automatically generated compliance documents from the latest commit.
+          
+          **Commit:** ${{ github.sha }}
+          **Date:** ${{ github.event.head_commit.timestamp }}
+        files: |
+          docs/ce.pdf
+          docs/manual.pdf
+          docs/risk-assessment.pdf
+          docs/sbom.pdf
+        prerelease: false
+        draft: false
+        fail_on_unmatched_files: true
