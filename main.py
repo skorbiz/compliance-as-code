@@ -111,18 +111,14 @@ def main():
     if not args.skip_export_schemas:
         export_schemas()
     
-    if args.all:
+    # Build documents
+    if args.doc:
+        # Single document in watch mode
+        return build_doc(args.doc, watch=True)
+    else:
+        # Default: build all documents (or explicit --all)
         codes = [build_doc(name) for name in DOCS]
         return max(codes) if codes else 0
-    
-    if args.doc:
-        return build_doc(args.doc, watch=True)
-    
-    # If no build target specified, just validation and export were done
-    if not args.all and not args.doc:
-        print("\nNo build target specified. Use --all or specify a document.")
-    
-    return 0
 
 
 if __name__ == "__main__":

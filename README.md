@@ -16,17 +16,17 @@ Proof-of-concept for managing compliance documents as code.
 uv venv && source .venv/bin/activate
 uv pip install -e ".[dev]"
 
-# Build all documents (also validates and exports schemas)
-python main.py --all
+# Build all documents (default - validates, exports schemas, and builds)
+python main.py
 
-# Build single document
+# Build single document in watch mode
 python main.py ce
 python main.py risk
 python main.py manual
 python main.py sbom
 
 # Build without validation or schema export
-python main.py --all --skip-validate --skip-export-schemas
+python main.py --skip-validate --skip-export-schemas
 
 # Run tests
 pytest tests/
