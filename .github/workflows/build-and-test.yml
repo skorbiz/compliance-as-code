@@ -7,6 +7,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# Required so GITHUB_TOKEN can create/update releases.
+permissions:
+  contents: write
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -38,19 +42,12 @@ jobs:
     - name: Build documents
       run: python main.py
     
-    - name: Upload to latest release
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      uses: softprops/action-gh-release@v2
+    - name: Upload document artifacts
+      uses: actions/upload-artifact@v4
+      if: success()
       with:
-        tag_name: latest
-        name: Latest Documents
-        body: |
-          Automatically built compliance documents from the latest commit.
-          
-          **Commit:** ${{ github.sha }}
-          **Date:** ${{ github.event.head_commit.timestamp }}
-        files: docs/*.pdf
-        prerelease: false
-        make_latest: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: compliance-documents
+        path: |
+          docs/*.pdf
+        retention-days: 90
+        overwrite: true
