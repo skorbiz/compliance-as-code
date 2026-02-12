@@ -2,7 +2,11 @@
 
 Proof-of-concept for managing compliance documents as code.
 
+[![Build and Test](https://github.com/skorbiz/compliance-as-code/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/skorbiz/compliance-as-code/actions/workflows/build-and-test.yml)
+
 ## Documents
+
+📦 **[Download Latest Documents](https://github.com/skorbiz/compliance-as-code/releases/tag/latest)** - Automatically updated on every commit to main
 
 - **CE Declaration** - EU conformity declaration
 - **Risk Assessment** - CRA cybersecurity risk assessment  
