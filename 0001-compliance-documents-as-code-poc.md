@@ -1,4 +1,4 @@
-# ADR 0001: Compliance Documents as Code (PoC)
+# ADR 0001: Compliance Documents as Code
 
 - Status: Proposal
 - Date: 2026-02-11
@@ -6,127 +6,111 @@
 
 ## Context
 
-This proof-of-concept (PoC) explores producing compliance-oriented documents (CE declaration, CRA-aligned risk assessment, SBOM, user manual) from version-controlled, structured sources.
+This ADR discusses the benefits and a potential pipeline for producing compliance-oriented documents as code. That means producing CE declaration, CRA-aligned risk assessment, SBOM, and user manual from version-controlled, structured sources.
 
-Traditional approaches usually store these artifacts as Word/Excel files on shared drives or SharePoint. That workflow often leads to:
-
-- Manual, error-prone edits and copy/paste across documents
-- Weak validation (structure, required fields, consistent IDs, dates)
-- Limited review ergonomics (diffs are noisy, merge conflicts are hard)
-- Difficult automation (CI checks, reproducible builds)
-- Tool-driven fragmentation (templates, macros, hidden spreadsheet logic)
-
+Traditional approaches usually store these artifacts as Word/Excel files on shared drives or SharePoint.
 We want a workflow that treats compliance artifacts like other engineering deliverables: reviewable, testable, reproducible, and automatable.
 
-## Decision
+## Why code-based compliance documents?
+
+### What Word/Excel/SharePoint does well
+
+- **Familiarity and accessibility:** Non-engineering stakeholders can edit and review easily.
+- **Existing templates and standards:** Established org formatting and workflows already exist.
+- **Low overhead for simple docs:** Works well when content is mostly narrative and not driven by structured data.
+
+### What code-based workflows do well
+- **Known workflow for developers:** Edit → commit → PR → review → merge
+- **Version control with history:** clear diffs, history, PR-based review, and clear “who changed what and why.”
+- **Validation and correctness:** Schema validation and tests catch missing fields, invalid enums, and regressions.
+- **Single source of truth:** Structured data can drive multiple documents if needed (or repeat in same document).
+- **Automation friendly:** Deterministic builds (same inputs → same outputs), CI generation per tag/release, and consistent formatting.
+- **Traceability and ecosystem integration:** Easier to link risks to commits, issues, releases, tests, and evidence.
+- **Future enablement:** Creates a foundation for AI-assisted drafting/review (e.g., completeness checks, suggested mitigations), while keeping the authoritative source structured and validated.
+
+**Trade-offs**
+- **Learning curve:** Typst + Pydantic is less familiar than Office tools for many stakeholders.
+- **Schema maintenance:** Evolving schemas requires keeping validators/tests in sync.
+- **Stakeholder workflows:** Some reviewers will still prefer Word-style commenting unless provided rendered PDFs.
+
+## Suggested approach
 
 Use a “compliance-as-code” pipeline where:
 
 - Compliance content is stored as **structured YAML** (source data)
+- Document templates are written in **Typst**, loading YAML data at build time
 - Data is validated using **Pydantic schemas** (single source of truth)
-- **JSON Schema** is exported for IDE support (e.g., YAML autocomplete)
+- **JSON Schema** is exported for IDE support (e.g., YAML autocomplete/validation)
 - Documents are rendered to **PDF using Typst**
-- A single build entrypoint (a CLI task/script) orchestrates validate → export schema → render documents
-- Tests (pytest) verify the YAML validates and the schemas behave as expected
+- A single build entrypoint (**python/uv script**) orchestrates: validate → export schema → render documents
+- Tests (**pytest**) verify:
+  - YAML validates against schemas
+  - schema rules behave as expected
+  - compliance requirements are enforced (e.g., no high risks without mitigations)
 
-This PoC keeps the documents and their source data in the same repository as the project, enabling standard engineering controls (code review, CI, traceability).
+## Reference folder structure
 
-## Pipeline (reference implementation)
 
-1. **Author / edit source data**
-  - YAML files for risks, SBOM, declarations, and other structured inputs (e.g., `data/risks.yaml`, `data/sbom.yaml`)
+```
+compliance-as-code/
+├── data/                           # Source data (YAML)
+│   ├── model.yaml                  # Risk assessment model (severity/probability scales)
+│   ├── risks.yaml                  # Risk register with identified risks
+│   └── sbom.yaml                   # Software bill of materials
+│
+├── docs/                           # Typst document templates
+│   ├── ce.typ                      # CE Declaration template
+│   ├── manual.typ                  # User manual template
+│   ├── risk-assessment.typ         # Risk assessment document template
+│   └── sbom.typ                    # SBOM document template
+│
+├── tests/                          # Test suite
+│   ├── test_schemas.py             # Schema validation tests
+│   └── test_review_schedule.py     # Example of using monitoring compliance deadlines with tests
+│
+├── schemas-generated/json-schemas/ # Auto-generated JSON schemas for IDE validation (gitignored)
+│   ├── risk-model.schema.json
+│   └── ...
+│
+├── main.py                         # Build orchestrator
+├── schemas.py                      # Pydantic schema definitions
+└── pyproject.toml                  # Python dependencies
 
-2. **Validate**
-  - Pydantic models validate YAML structure and constraints
-  - A build command (e.g., `main.py --validate`) and tests fail fast on invalid data
+```
 
-3. **Export schemas for tooling**
-  - A build command (e.g., `main.py --export-schemas`) exports auto-generated JSON Schemas used by IDE tooling
-   - Generated artifacts are clearly marked as auto-generated and not hand-edited
-
-4. **Render documents**
-  - Typst sources load YAML (e.g., `yaml("/data/risks.yaml")`) and produce PDFs
-  - A build command (e.g., `main.py --all`) renders the document set
-
-5. **CI-friendly execution**
-   - Command-line pipeline is deterministic and suitable for CI runners
-   - Dependencies are managed with `uv`
-
-## Why this is better than Word/Excel/SharePoint
-
-### Advantages
-
-- **Version control & reviewability**
-  - Small, readable diffs for YAML/Typst
-  - PR-based review with comments tied to exact lines
-  - Easy history/blame to answer “who changed what and why?”
-
-- **Validation and correctness by construction**
-  - Schema validation prevents missing required fields, invalid enums, malformed IDs/dates
-  - Tests catch regressions early (before PDF generation or audit deadlines)
-
-- **Single source of truth**
-  - The same YAML data can drive multiple outputs (risk assessment, CE annexes, summaries)
-  - Eliminates copy/paste divergence across documents
-
-- **Automation and repeatability**
-  - Deterministic builds: same inputs → same outputs
-  - Works in CI to generate artifacts per release tag
-
-- **Traceability and audit readiness**
-  - Link compliance changes to commits, releases, issues, and evidence
-  - Enables “compliance delta” reporting between versions
-
-- **Tooling ergonomics**
-  - JSON Schema export enables IDE autocomplete/validation for YAML editors
-
-### Trade-offs / risks
-
-- **Learning curve**: Typst + Pydantic is less familiar than Office tools.
-- **Schema maintenance**: updating a schema requires updating validation/tests.
-- **Stakeholder access**: some non-engineering stakeholders prefer Word workflows.
-- **Rendering tool choice**: Typst is newer than LaTeX and may have fewer org-standard templates.
 
 ## Alternatives considered
 
 ### A. Keep Word/Excel + SharePoint
-
-- Pros: familiar, easy for non-engineers, existing templates.
-- Cons: weak validation, poor diffs, hard automation, fragile macros, duplicated content, difficult reproducible builds.
+- Pros: Familiar, easy for non-engineers, existing templates.
+- Cons: Weak validation, poor diffs, hard automation, fragile macros, duplicated content, difficult reproducible builds.
 
 ### B. Markdown/AsciiDoc + Pandoc
-
-- Pros: simple authoring, widely used, good diffs, Pandoc supports many outputs.
-- Cons: structured data validation still needs a schema system; complex layouts and tables can be harder; PDF styling may require LaTeX.
+- Pros: Simple authoring, widely used, good diffs, Pandoc supports many outputs.
+- Cons: Structured data validation still needs a schema system; complex layouts/tables can be harder; PDF styling may require LaTeX.
 
 ### C. LaTeX
-
-- Pros: powerful typesetting, mature ecosystem.
-- Cons: steeper learning curve; much higher template complexity; slower iteration for non-LaTeX users.
+- Pros: Powerful typesetting, mature ecosystem.
+- Cons: Steeper learning curve; higher template complexity; slower iteration for non-LaTeX users.
 
 ### D. Keep YAML, validate with JSON Schema directly (no Pydantic)
-
-- Pros: schema is language-agnostic; many validators exist.
-- Cons: harder to express richer constraints/derived validation;
+- Pros: Language-agnostic schema; many validators exist.
+- Cons: Harder to express richer constraints/derived validation.
 
 ### E. Other validation frameworks
-
 - Examples: `jsonschema`, `yamale`, `cerberus`, `voluptuous`, `pandera`, OPA/Rego.
 - Rationale for Pydantic here: strong typing model, good error messages, easy composition, and straightforward JSON Schema export.
 
 ### F. Use SBOM standards output directly (CycloneDX/SPDX tooling)
-
-- Pros: standardized interchange formats, better ecosystem integration.
+- Pros: Standardized interchange formats, better ecosystem integration.
 - Cons: Goal here is a compliance document + process pipeline; standards export can be added later without changing the core approach.
 
 ## Consequences
-
-- We standardize on YAML + Pydantic as the source-of-truth data model for compliance documents in this PoC.
+- We standardize on YAML + Pydantic as the source-of-truth data model for compliance documents.
 - Document generation becomes buildable and testable like application code.
 - The repo becomes the authoritative location for compliance artifacts (inputs, validation rules, and generated PDFs).
 
 ## Next steps (out of scope for this ADR)
-
-- Add schema evolution guidance (versioning, deprecations)
-- Consider exporting additional machine-readable outputs (CycloneDX/SPDX, CSV extracts)
-- Add evidence links (tickets, threat modeling outputs, security test results) tied to risk IDs
+- Add schema evolution guidance (versioning, deprecations).
+- Consider exporting additional machine-readable outputs (CycloneDX/SPDX, CSV extracts).
+- Add evidence links (tickets, threat modeling outputs, security test results) tied to risk IDs.

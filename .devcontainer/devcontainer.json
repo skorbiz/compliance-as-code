@@ -28,7 +28,8 @@
 				"openai.chatgpt",
 				"charliermarsh.ruff",
 				"meta.pyrefly",
-				"myriad-dreamin.tinymist"
+				"myriad-dreamin.tinymist",
+				"redhat.vscode-yaml"
 			]
 		}
 	},

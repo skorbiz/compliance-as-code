@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../schemas-generated/json-schemas/risk-model.schema.json
 # Risk Assessment Model
 # Defines severity and probability scales for risk analysis
 

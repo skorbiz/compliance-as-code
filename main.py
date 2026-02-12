@@ -54,7 +54,7 @@ def validate_yaml() -> bool:
     return all_valid
 
 
-def build_doc(name: str) -> int:
+def build_doc(name: str, watch: bool = False) -> int:
     """Build a single document."""
     source = Path(DOCS[name])
     if not source.exists():
@@ -62,18 +62,30 @@ def build_doc(name: str) -> int:
         return 1
     
     output = source.with_suffix(".pdf")
-    cmd = ["typst", "compile", "--root", ".", str(source), str(output)]
-    print(f"Building {source}...")
+    mode = "watch" if watch else "compile"
+    cmd = ["typst", mode, "--root", ".", str(source), str(output)]
+    
+    if watch:
+        print(f"Watching {source} for changes... (Ctrl+C to stop)")
+    else:
+        print(f"Building {source}...")
+    
     return subprocess.run(cmd).returncode
 
 
 def export_schemas() -> None:
     """Export JSON schemas for VS Code."""
     import json
-    out_dir = Path("schemas/generated-json-schemas")
+    out_dir = Path("schemas-generated/json-schemas")
     out_dir.mkdir(parents=True, exist_ok=True)
     
-    for model, name in [(RiskModel, "risk-model"), (RiskRegister, "risk-register")]:
+    schemas_to_export = [
+        (RiskModel, "risk-model"),
+        (RiskRegister, "risk-register"),
+        (SBOMGenerated, "sbom-generated"),
+    ]
+    
+    for model, name in schemas_to_export:
         schema = model.model_json_schema()
         with open(out_dir / f"{name}.schema.json", "w") as f:
             json.dump(schema, f, indent=2)
@@ -104,7 +116,7 @@ def main():
         return max(codes) if codes else 0
     
     if args.doc:
-        return build_doc(args.doc)
+        return build_doc(args.doc, watch=True)
     
     # If no build target specified, just validation and export were done
     if not args.all and not args.doc:

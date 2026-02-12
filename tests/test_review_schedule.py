@@ -14,16 +14,15 @@ def _load_review_date() -> date:
 
 
 def test_review_schedule_warns_if_overdue():
+    """Test always passes but emits a warning if review date has passed."""
     review_date = _load_review_date()
     today = date.today()
-    with warnings.catch_warnings(record=True) as caught:
-        warnings.simplefilter("always")
-        if today > review_date:
-            warnings.warn(
-                f"Risk assessment review overdue (was due {review_date.isoformat()}).",
-                UserWarning,
-            )
-            assert len(caught) == 1
-            assert "review overdue" in str(caught[0].message)
-        else:
-            assert len(caught) == 0
+    
+    if today > review_date:
+        days_overdue = (today - review_date).days
+        warnings.warn(
+            f"⚠️  Risk assessment review is {days_overdue} days overdue! "
+            f"Was due: {review_date.isoformat()}",
+            UserWarning,
+        )
+    # Test always passes - warning is just for visibility
