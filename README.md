@@ -2,7 +2,7 @@
 
 Proof-of-concept for managing compliance documents as code.
 
-[![Build and Test](https://github.com/skorbiz/compliance-as-code/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/skorbiz/compliance-as-code/actions/workflows/build-and-test.yml)
+[![Build and Test](https://github.com/skorbiz/compliance-as-code/actions/workflows/build-and-test.yml/badge.svg?branch=main)](https://github.com/skorbiz/compliance-as-code/actions/workflows/build-and-test.yml)
 
 ## Documents
 
