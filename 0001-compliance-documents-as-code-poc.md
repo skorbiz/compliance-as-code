@@ -85,23 +85,27 @@ compliance-as-code/
 - Pros: Familiar, easy for non-engineers, existing templates.
 - Cons: Weak validation, poor diffs, hard automation, fragile macros, duplicated content, difficult reproducible builds.
 
-### B. Markdown/AsciiDoc + Pandoc
+### B. Dedicated GRC platforms
+- Pros: Built-in workflow controls, audit trails, reporting, and program management features.
+- Cons: Hard to find the right fit, licensing costs, vendor lock-in, integration overhead, less flexibility, and limited agent/code friendliness.
+
+### C. Markdown/AsciiDoc + Pandoc
 - Pros: Simple authoring, widely used, good diffs, Pandoc supports many outputs.
 - Cons: Structured data validation still needs a schema system; complex layouts/tables can be harder; PDF styling may require LaTeX.
 
-### C. LaTeX
+### D. LaTeX
 - Pros: Powerful typesetting, mature ecosystem.
 - Cons: Steeper learning curve; higher template complexity; slower iteration for non-LaTeX users.
 
-### D. Keep YAML, validate with JSON Schema directly (no Pydantic)
+### E. Keep YAML, validate with JSON Schema directly (no Pydantic)
 - Pros: Language-agnostic schema; many validators exist.
 - Cons: Harder to express richer constraints/derived validation.
 
-### E. Other validation frameworks
+### F. Other validation frameworks
 - Examples: `jsonschema`, `yamale`, `cerberus`, `voluptuous`, `pandera`, OPA/Rego.
 - Rationale for Pydantic here: strong typing model, good error messages, easy composition, and straightforward JSON Schema export.
 
-### F. Use SBOM standards output directly (CycloneDX/SPDX tooling)
+### G. Use SBOM standards output directly (CycloneDX/SPDX tooling)
 - Pros: Standardized interchange formats, better ecosystem integration.
 - Cons: Goal here is a compliance document + process pipeline; standards export can be added later without changing the core approach.
 
