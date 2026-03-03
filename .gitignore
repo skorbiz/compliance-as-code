@@ -7,7 +7,11 @@ __pycache__/
 *.egg-info/
 .coverage
 htmlcov/
+
+# Shemas generated from YAML files
 schemas-generated/
+
+# Docusaurus build artifacts
 website/node_modules/
 website/build/
 website/.docusaurus/
