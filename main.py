@@ -13,7 +13,7 @@ from pathlib import Path
 import yaml
 from pydantic import ValidationError
 
-from schemas import RiskModel, RiskRegister, SBOMGenerated
+from model.schemas import RiskModel, RiskRegister, SBOMGenerated
 
 
 DOCS = {
@@ -24,9 +24,9 @@ DOCS = {
 }
 
 YAML_FILES = [
-    ("data/model.yaml", RiskModel),
-    ("data/risks.yaml", RiskRegister),
-    ("data/sbom.yaml", SBOMGenerated),
+    ("model/risk_model.yaml", RiskModel),
+    ("model/risks.yaml", RiskRegister),
+    ("model/sbom.yaml", SBOMGenerated),
 ]
 
 
