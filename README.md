@@ -9,7 +9,7 @@ It is written in an architectural decision record (ADR) format, which we use at 
 
 ## Outputs
 
-### Documents
+### Compliance documents
 
 📦 **Download Latest Documents** (automatically updated on every commit to main):
 
