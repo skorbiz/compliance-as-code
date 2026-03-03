@@ -23,6 +23,9 @@ DOCS = {
     "risk": "docs/risk-assessment.typ",
 }
 
+WEBSITE_DIR = Path("website")
+DOCUSAURUS_GENERATOR = Path("website/scripts/generate_docs_from_yaml.py")
+
 YAML_FILES = [
     ("model/risk_model.yaml", RiskModel),
     ("model/risks.yaml", RiskRegister),
@@ -73,6 +76,33 @@ def build_doc(name: str, watch: bool = False) -> int:
     return subprocess.run(cmd).returncode
 
 
+def build_website(watch: bool = False) -> int:
+    """Build or watch the Docusaurus website."""
+    # Generate markdown from YAML
+    print("→ Generating docs from YAML...")
+    result = subprocess.run([sys.executable, str(DOCUSAURUS_GENERATOR)])
+    if result.returncode != 0:
+        return result.returncode
+
+    # Install/update dependencies if needed
+    node_modules = WEBSITE_DIR / "node_modules"
+    package_lock = WEBSITE_DIR / "package-lock.json"
+    
+    if not node_modules.exists():
+        print("→ Installing dependencies...")
+        npm_cmd = ["npm", "ci" if package_lock.exists() else "install"]
+        result = subprocess.run(npm_cmd, cwd=WEBSITE_DIR)
+        if result.returncode != 0:
+            return result.returncode
+
+    # Build or serve
+    mode = "start" if watch else "build"
+    action = "Starting dev server" if watch else "Building static site"
+    print(f"→ {action}...")
+    
+    return subprocess.run(["npm", "run", mode], cwd=WEBSITE_DIR).returncode
+
+
 def export_schemas() -> None:
     """Export JSON schemas for VS Code."""
     import json
@@ -95,11 +125,18 @@ def export_schemas() -> None:
 def main():
     parser = argparse.ArgumentParser(description="Build compliance documents")
     parser.add_argument("--all", action="store_true", help="Build all documents")
+    parser.add_argument("--web", action="store_true", help="Generate and build static Docusaurus website")
+    parser.add_argument("--web-watch", action="store_true", help="Generate and run Docusaurus in watch mode")
     parser.add_argument("--skip-validate", action="store_true", help="Skip YAML validation")
     parser.add_argument("--skip-export-schemas", action="store_true", help="Skip exporting JSON schemas")
-    parser.add_argument("doc", nargs="?", choices=list(DOCS.keys()), help="Document to build")
+    parser.add_argument("doc", nargs="?", choices=list(DOCS.keys()), help="Typst document to build in watch mode")
     
     args = parser.parse_args()
+
+    if args.web and args.web_watch:
+        parser.error("Choose either --web or --web-watch, not both.")
+    if args.doc and (args.web or args.web_watch):
+        parser.error("Cannot combine a Typst watch target with website options.")
     
     # Validate YAML files (unless skipped)
     if not args.skip_validate:
@@ -110,6 +147,12 @@ def main():
     # Export schemas (unless skipped)
     if not args.skip_export_schemas:
         export_schemas()
+
+    # Build website
+    if args.web_watch:
+        return build_website(watch=True)
+    if args.web:
+        return build_website(watch=False)
     
     # Build documents
     if args.doc:

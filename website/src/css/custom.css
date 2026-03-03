@@ -1,0 +1,14 @@
+:root {
+  --ifm-color-primary: #006d77;
+  --ifm-color-primary-dark: #005f68;
+  --ifm-color-primary-darker: #00585f;
+  --ifm-color-primary-darkest: #00494e;
+  --ifm-color-primary-light: #007b86;
+  --ifm-color-primary-lighter: #00848f;
+  --ifm-color-primary-lightest: #0098a3;
+  --ifm-code-font-size: 95%;
+}
+
+.navbar__title {
+  font-weight: 700;
+}
