@@ -47,14 +47,16 @@ Use a “compliance-as-code” pipeline where:
   - YAML validates against schemas
   - schema rules behave as expected
   - compliance requirements are enforced (e.g., no high risks without mitigations)
+- A minimal **Docusaurus** site is generated from the same YAML source data. This is partly to show the model driven approach investigates complexities of a Docusaurus output. 
 
 ## Reference folder structure
 
 
 ```
 compliance-as-code/
-├── data/                           # Source data (YAML)
-│   ├── model.yaml                  # Risk assessment model (severity/probability scales)
+├── model/                          # Source YAML models/data
+│   ├── model/schemas.py            # Pydantic schema definitions
+│   ├── risk_model.yaml             # Risk assessment model (severity/probability scales)
 │   ├── risks.yaml                  # Risk register with identified risks
 │   └── sbom.yaml                   # Software bill of materials
 │
@@ -72,8 +74,12 @@ compliance-as-code/
 │   ├── risk-model.schema.json
 │   └── ...
 │
+├── website/                                  # Docusaurus documentation site
+│   ├── scripts/generate_docs_from_yaml.py    # YAML -> markdown generator for web docs
+│   ├── docs/                                 # Markdown pages (some generated from YAML)
+│   └── docusaurus.config.js
+│
 ├── main.py                         # Build orchestrator
-├── schemas.py                      # Pydantic schema definitions
 └── pyproject.toml                  # Python dependencies
 
 ```
@@ -109,12 +115,18 @@ compliance-as-code/
 - Pros: Standardized interchange formats, better ecosystem integration.
 - Cons: Goal here is a compliance document + process pipeline; standards export can be added later without changing the core approach.
 
+### I. Docusaurs for all outputs (no Typst/PDF)
+- Pros: Single output format.
+- Cons: Much less formal/printable artifact. No native yaml embedding. Based on limited markdown syntax.
+
 ## Consequences
 - We standardize on YAML + Pydantic as the source-of-truth data model for compliance documents.
 - Document generation becomes buildable and testable like application code.
-- The repo becomes the authoritative location for compliance artifacts (inputs, validation rules, and generated PDFs).
+- The same source data can feed both formal PDFs (Typst) and browsable web docs (Docusaurus).
+- The repo becomes the authoritative location for compliance artifacts (inputs, validation rules, generated PDFs, and generated web pages).
 
 ## Next steps (out of scope for this ADR)
 - Add schema evolution guidance (versioning, deprecations).
 - Consider exporting additional machine-readable outputs (CycloneDX/SPDX, CSV extracts).
 - Add evidence links (tickets, threat modeling outputs, security test results) tied to risk IDs.
+- Expand generated Docusaurus pages beyond the first risk-model summary page if the MVP proves useful.
