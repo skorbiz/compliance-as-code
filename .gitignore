@@ -11,6 +11,8 @@ schemas-generated/
 website/node_modules/
 website/build/
 website/.docusaurus/
+website/docs/generated/
+website/docs/background/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

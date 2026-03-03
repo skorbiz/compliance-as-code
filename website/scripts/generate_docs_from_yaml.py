@@ -22,11 +22,29 @@ from model.schemas import RiskModel, RiskRegister
 MODEL_SOURCE = ROOT / "model/risk_model.yaml"
 RISKS_SOURCE = ROOT / "model/risks.yaml"
 OUTPUT = ROOT / "website/docs/generated/risk-model.md"
+ROOT_DOC_SOURCES = [
+    (ROOT / "README.md", ROOT / "website/docs/background/readme.md"),
+    (
+        ROOT / "0001-compliance-documents-as-code-poc.md",
+        ROOT / "website/docs/background/0001-compliance-documents-as-code-poc.md",
+    ),
+]
 
 
 def _escape_cell(value: str) -> str:
     # MDX parses raw "<...>" as JSX, so escape HTML-sensitive characters.
     return escape(value, quote=False).replace("|", "\\|").replace("\n", " ")
+
+
+def _sync_root_markdown_docs() -> None:
+    for source, target in ROOT_DOC_SOURCES:
+        if not source.exists():
+            raise FileNotFoundError(f"Missing source markdown file: {source}")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        content = source.read_text(encoding="utf-8")
+        # Keep root files as source-of-truth and expose synced copies to Docusaurus.
+        banner = f"<!-- Generated from /{source.relative_to(ROOT)}. Edit source at repo root. -->\n\n"
+        target.write_text(f"{banner}{content}", encoding="utf-8")
 
 
 def _read_data() -> tuple[RiskModel, RiskRegister]:
@@ -200,6 +218,7 @@ def _render(model: RiskModel, register: RiskRegister) -> str:
 
 
 def main() -> int:
+    _sync_root_markdown_docs()
     model, register = _read_data()
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(_render(model, register), encoding="utf-8")
