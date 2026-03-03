@@ -1,6 +1,8 @@
 # Compliance as Code
 
 Proof-of-concept for managing compliance documents as code.
+Motivation and discussion of the "compliance as code" approach can be found in the [Architecture/POC write-up](./0001-compliance-documents-as-code-poc.md).
+It is written in an architectural decision record (ADR) format, which we use at work.
 
 [![Build and Test](https://github.com/skorbiz/compliance-as-code/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/skorbiz/compliance-as-code/actions/workflows/build-and-test.yml?query=branch%3Amain)
 [![Deploy Docs Site](https://github.com/skorbiz/compliance-as-code/actions/workflows/deploy-docs-site.yml/badge.svg)](https://github.com/skorbiz/compliance-as-code/actions/workflows/deploy-docs-site.yml?query=branch%3Amain)
@@ -43,11 +45,6 @@ uv run main.py --skip-validate --skip-export-schemas
 # Run tests
 uv run pytest tests/
 ```
-
-## Background
-
-Motivation and discussion of the "compliance as code" approach can be found in the [Architecture/POC write-up](./0001-compliance-documents-as-code-poc.md).
-It is written in an architectural decision record (ADR) format, which we use at work.
 
 
 ## Project Structure
