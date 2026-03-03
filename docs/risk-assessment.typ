@@ -3,8 +3,8 @@
 #set heading(numbering: "1.1")
 
 // Load risk data from YAML
-#let model = yaml("/data/model.yaml")
-#let risk_data = yaml("/data/risks.yaml")
+#let model = yaml("/model/risk_model.yaml")
+#let risk_data = yaml("/model/risks.yaml")
 #let metadata = risk_data.metadata
 
 // Calculate risk score

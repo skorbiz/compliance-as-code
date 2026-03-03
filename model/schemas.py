@@ -2,7 +2,7 @@
 Pydantic schemas for YAML validation.
 
 Simplified schemas for:
-- Risk assessment (model.yaml, risks.yaml)
+- Risk assessment (risk_model.yaml, risks.yaml)
 - SBOM (sbom.yaml)
 """
 
@@ -47,7 +47,7 @@ class RiskCategoryDefinition(BaseModel):
 
 
 class RiskModel(BaseModel):
-    """Risk assessment model (model.yaml)."""
+    """Risk assessment model (risk_model.yaml)."""
     model_config = ConfigDict(extra="forbid")
     
     severity_levels: dict[str, SeverityDefinition]

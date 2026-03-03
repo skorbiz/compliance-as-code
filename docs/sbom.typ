@@ -3,7 +3,7 @@
 #set heading(numbering: "1.1")
 
 // Load auto-generated dependencies
-#let generated = yaml("/data/sbom.yaml")
+#let generated = yaml("/model/sbom.yaml")
 
 // Manual components (infrastructure/tooling not in package manager)
 #let manual_components = (

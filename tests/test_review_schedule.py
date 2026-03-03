@@ -3,11 +3,11 @@ import warnings
 
 import yaml
 
-from schemas import RiskRegister
+from model.schemas import RiskRegister
 
 
 def _load_review_date() -> date:
-    with open("data/risks.yaml") as f:
+    with open("model/risks.yaml") as f:
         data = yaml.safe_load(f)
     register = RiskRegister.model_validate(data)
     return register.metadata.review_date

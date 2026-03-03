@@ -8,11 +8,19 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -
     python3.12-venv \
     python3.12-dev \
     software-properties-common \
+    ca-certificates \
+    gnupg \
     curl \
     wget \
     xz-utils \
     sudo \
     git
+
+# Install Node.js LTS (v20) directly from official binaries
+RUN curl -fsSL https://nodejs.org/dist/v20.18.1/node-v20.18.1-linux-x64.tar.xz -o /tmp/node.tar.xz && \
+    tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 && \
+    rm /tmp/node.tar.xz && \
+    node --version && npm --version
 
 # Install UV 0.9.21 for python package management
 RUN curl -LsSf https://astral.sh/uv/0.9.21/install.sh | UV_INSTALL_DIR=/usr/local/bin sh
