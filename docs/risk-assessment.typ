@@ -141,22 +141,23 @@ Every risk records an explicit treatment decision: *undecided* (no decision yet)
     column-gutter: 1em,
     
     [*Risk ID:*], [#risk.id],
-    [*Category:*], [#if risk.category.len() > 0 [#risk.category.map((id) => category_names.at(id, default: id)).join(", ")] else [—]],
+    [*Category:*], [#let category = risk.at("category", default: ())
+      if category.len() > 0 [#category.map((id) => category_names.at(id, default: id)).join(", ")] else [—]],
     [*Zone:*], [#upper(risk.zone_edge_cloud)],
     [*Conduit / exposure area:*], [#risk.conduit_or_exposure_area],
     [*Phases:*], [#risk.phases.map(pretty).join(", ")],
-    [*Treatment:*], [#pretty(risk.treatment)],
+    [*Treatment:*], [#pretty(risk.at("treatment", default: "undecided"))],
   )
   
   #v(0.5em)
   
-  #if risk.iec_62443_3_3_requirement_inspiration != "" [
+  #if risk.at("iec_62443_3_3_requirement_inspiration", default: "") != "" [
     === IEC 62443-3-3 Requirement Inspiration
     #risk.iec_62443_3_3_requirement_inspiration
   ]
   
   === Vulnerability
-  #if risk.vulnerability != "" [#risk.vulnerability] else [—]
+  #if risk.at("vulnerability", default: "") != "" [#risk.vulnerability] else [—]
   
   === Threat
   #risk.threat
@@ -195,8 +196,9 @@ Every risk records an explicit treatment decision: *undecided* (no decision yet)
   
   === Existing Controls
   
-  #if risk.existing_controls.len() > 0 [
-    #for control in risk.existing_controls [
+  #let existing_controls = risk.at("existing_controls", default: ())
+  #if existing_controls.len() > 0 [
+    #for control in existing_controls [
       - #control
     ]
   ] else [
@@ -205,7 +207,7 @@ Every risk records an explicit treatment decision: *undecided* (no decision yet)
   
   === Residual Risk Assessment
   
-  #if risk.impact_residual != none [
+  #if risk.at("impact_residual", default: none) != none [
     #let residual_score = calc_risk(risk.impact_residual, risk.likelihood_residual)
     #let (residual_level, residual_def) = get_risk_level(residual_score)
     
@@ -238,7 +240,8 @@ Every risk records an explicit treatment decision: *undecided* (no decision yet)
   
   === Additional Controls
   
-  #if risk.additional_controls.len() > 0 [
+  #let additional_controls = risk.at("additional_controls", default: ())
+  #if additional_controls.len() > 0 [
     #table(
       columns: (1fr, 2fr, 1fr, auto),
       stroke: 0.5pt,
@@ -246,7 +249,7 @@ Every risk records an explicit treatment decision: *undecided* (no decision yet)
       
       [*Task*], [*Description*], [*Owner*], [*Due Date*],
       
-      ..for ctrl in risk.additional_controls {
+      ..for ctrl in additional_controls {
         (
           ctrl.task,
           ctrl.description,
@@ -259,7 +262,7 @@ Every risk records an explicit treatment decision: *undecided* (no decision yet)
     _No additional controls required._
   ]
   
-  #if risk.notes != "" [
+  #if risk.at("notes", default: "") != "" [
     === Notes
     #risk.notes
   ]
