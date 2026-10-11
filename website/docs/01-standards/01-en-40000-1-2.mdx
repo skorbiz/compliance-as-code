@@ -1,0 +1,409 @@
+---
+title: EN 40000-1-2 — Product cybersecurity risk management
+sidebar_label: EN 40000-1-2
+description: Working notes on the draft EN 40000-1-2 product security and risk-management standard.
+tags:
+  - standards
+  - en 40000
+  - cra
+  - risk management
+---
+
+**Source status:** Draft/provisional. See the [EN 40000 series index](./00-en-40000.mdx).
+
+:::info
+**Referencing convention used in these notes:**
+
+Every requirement below is tagged with its **requirement ID** (`[RMA-xx-RQ-xx]` for Clause 6, `[CLA-xx-RQ-xx]` for Clause 7) and its **exact subclause number**, matching the numbering in the standard 1:1. Use the subclause number to look up the source text and verify a note. Per the standard's own Clause 4 / Table 1, each numbered activity is split into:
+
+- **Rationale and guidance** (`.1`) — informative, explanatory only.
+- **Input** (`.2`), **Requirement** (`.3`), **Output** (`.4`), **Assessment criteria** (`.5`) — normative.
+
+**Copyright & redaction:** the draft standard is copyrighted. To show its structure without reproducing the full
+normative text in a public repo, **Clause 6 (the risk-management workflow) is written out in full as the worked
+example** — including its `[RMA-xx-RQ-xx]` requirement blocks. In **Clause 7** the informative rationale/guidance is
+kept, but the repetitive `[CLA-xx-RQ-xx]` requirement enumerations are summarised and marked:
+
+> _[CLA-xx-RQ-xx] omitted to respect the standard's copyright (public repo) — see the draft EN 40000-1-2 for the authoritative text._
+  :::
+
+## Overview
+
+EN 40000-1-2 is part of the standardization work requested by the European Committee to support the Cyber Resilience Act (CRA).
+
+The EN 40000-1 series is a set of horizontal standards. The standard includes:
+
+- **EN 40000-1-1** — Vocabulary.
+- **EN 40000-1-2** — Principles, product risk management, and lifecycle activities (this document).
+- **EN 40000-1-3** — Vulnerability handling.
+- **EN 40000-1-4** — Generic security requirements.
+
+The specific EN 40000-1-2 includes:
+
+- **Clause 5** (informative) — generic cybersecurity principles: risk-based approach, security by design, secure by default, transparency.
+- **Clause 6** (informative + normative) — How to do risk assessment (defined broadly compared to **IEC 62443-3-2** as CRA covers a wide product range).
+- **Clause 7** (informative + normative) — How to develop secure products (CI/CD, distribution, review, testing, etc.). (Some overlap with **IEC 62443-4-1**, which also covers much of the same)
+- **Annex A** (informative) — coherence guidance for vertical standards.
+- **Annex B** (informative) — accessible and inclusive cybersecurity.
+- **Annex C** (informative) — how the clauses/concepts interact.
+
+## Clause 5 — Product cybersecurity principles
+
+### 5.2 Risk-based approach to product cybersecurity
+
+**5.2.1 Principle:** appropriate controls are implemented by the manufacturer during the product lifecycle.
+
+**5.2.2 Rationale and guidance:** controls are based on identified risk, characterized by **impact** (magnitude of loss/disruption) and **likelihood** of occurrence.
+
+- establishing the product context (6.2);
+- establishing risk acceptance criteria (6.3);
+- conducting a risk assessment (6.4);
+- applying risk treatment (6.5);
+- communicating about risks (6.6);
+- risk monitoring and review (6.7).
+
+### 5.3 Product security by design
+
+**5.3.1 Principle:** the product is designed, developed, produced, and maintained in a way that integrates cybersecurity measures from the concept phase throughout the entire product lifecycle.
+
+**5.3.2 Rationale and guidance:** cybersecurity is a fundamental aspect of the design in all its parts, not an element added later. Techniques/best practices listed (non-exhaustive) include:
+
+- **Least privilege** — access to resources limited to the minimum necessary for the intended functionality.
+- **Attack surface minimization** — e.g. removing unnecessary interfaces.
+- **Defence in depth** — multiple layers of controls so a single compromised layer doesn't fail the product.
+- **Secure coding practices** — e.g. language-specific secure coding rules, tooling to detect security issues in code.
+- **Do not rely on security by obscurity** — rely on established measures/best practices instead of secrecy of design details (example given: don't derive passwords from a secret algorithm seeded only with public information).
+- **User-centric design** — design for user needs/behaviour in the IPRFU context; keep users secure while minimising friction (to avoid incentives to bypass controls); examples include accessibility (Annex B) and notifying users of available security updates.
+- **Life cycle management** — controls across design, development, production, deployment, operation and decommissioning (e.g. secure-by-default at market placement, updates during the support period, secure decommissioning option).
+
+## 5.4 Secure by default product
+
+Default configuration of the product is secure for its intended purpose and reasonable foreseeable use.
+
+### 5.4.1. Rationale and guidance
+
+**5.4.1 Principle:** the default configuration of the product is secure for its intended operational environment and foreseeable use.
+
+**5.4.2 Rationale and guidance:** protects users — especially those without the technical knowledge to configure security controls themselves (particularly ordinary/vulnerable users, 6.2.1.6).
+
+**5.4.2 Rationale and guidance:** "secure by design" (5.3) is about the whole development process, "secure by default" (5.4) is specifically about the state of the product when placed on the market; it does not remove the need for later security updates.
+
+Best practices include:
+
+- provide secure default configurations;
+- enable security features by default;
+- disable all non-essential network services and interfaces;
+- update the product to its most recent secure version upon first installation;
+- (\*) disable remote administration by default;
+- (\*) make telemetry/analytics opt-in for consumers and contractual opt-in for business users;
+- provide an easy "reset to secure defaults" action;
+- require explicit user action to deviate from secure defaults, and warn the user when doing so;
+- support update mechanisms that allow recovery from partial/failed installations (rollback to a secure state);
+- implement anti-rollback mechanisms to prevent unauthorized installation of older, vulnerable software versions;
+- clearly document security-relevant configuration options and their implications; and
+- accommodate accessibility needs;
+
+
+### 5.5 Transparency in product security
+
+**5.5.1 Principle:** make adequate and relevant cybersecurity information available to relevant interested parties (users, integrators, supply-chain actors).
+
+**5.5.2 Rationale and guidance:** transparency allows relevant interested parties to do risk treatment; not all parties need the same information, topics can cover:
+
+- the availability of updates;
+- risks involved with unduly delayed updates;
+- the current security state of the product;
+- relevant risks, the risk status and potential mitigations; and
+- information in case of an incident.
+
+Best practice: make communication available in alternative forms.
+
+## Clause 6 — Product cybersecurity risk management activities
+
+**6.1 Rationale and guidance:** risk management applies across the whole product lifecycle (design, development, production, maintenance, decommissioning). The activities are:
+
+- establishing the product context (6.2);
+- establishing the product cybersecurity risk acceptance criteria (6.3);
+- performing an assessment of the product cybersecurity risks (6.4);
+- performing appropriate treatment of the product cybersecurity risks (6.5);
+- communicating the residual product cybersecurity risks (6.6);
+- reviewing the product cybersecurity risks (6.7).
+
+:::tip Cross-reference
+This clause is intentionally generic because the CRA covers a very broad range of products. The [IEC 62443-3-2:2020 notes](./03-iec-62443-3-2-2020.mdx) provide a more detailed IACS-specific method. Notes here mainly covers interesting deviations.
+:::
+
+### 6.2 Product context
+
+**6.2.1 Product context elements** — establishing the product context sets the starting point for risk assessment/treatment; it's iterative and needs review when the product or its context changes. Elements (6.2.1.2–6.2.1.7):
+
+- **6.2.1.2 Product intended purpose and reasonably foreseeable use (IPRFU):** essential to scope risk identification; contains the conditions of use; accessibility/Assistive Technology use is part of IPRFU (see the 'Blue Guide' §2.8 for more on IPRFU).
+- **6.2.1.3 Product functions:** functions specified by the manufacturer for intended use, including cybersecurity-protective functions and the ability to configure the product.
+- **6.2.1.4 Product operational environment:** the conditions/environment the product is designed for; influences both likelihood and impact of incidents; can include networks, the system it's integrated into, physical surroundings, Assistive Technology compatibility (Annex B), and external people/animals that can influence the product. Physical/logical access levels can be **public** (no meaningful restriction), **limited** (some restriction), or **controlled** (authorized entities only).
+- **6.2.1.5 Product architecture overview:** high-level overview of key components, interfaces and dependencies, including remote data processing solutions; integrated components can introduce cybersecurity risk.
+- **6.2.1.6 Product user description:** any natural/legal person or organization intended to interact with the product (including as a component in another product). Classifications (source: EN IEC 62443-4-1:2018, as amended by EN IEC 62443-4-1:2018/prAA:2026):
+  - **Vulnerable users** — e.g. children or users with disabilities.
+  - **Ordinary users** — not assumed to have any product- or security-specific skill/knowledge.
+  - **Instructed users** — instructed/trained or supervised by a skilled user on the product.
+  - **Skilled users** — specialized training and enhanced experience with the product.
+- **6.2.1.7 Distribution of security functions:** overview of functions (a) provided by the product for its own use, (b) required by the product from its environment, (c) provided by the product for use by other products in its environment.
+
+**6.2.3 Requirement:**
+
+- **[RMA-01-RQ-01]** The product context shall be identified and documented, including: IPRFU; functions; operational environment; architecture overview; user description; and distribution of security functions (if available).
+- **[RMA-01-RQ-02]** If the product has a remote data processing solution, it shall be considered when determining the product context.
+
+### 6.3 Risk acceptance criteria
+
+**6.3.1 Rationale and guidance:** Risk acceptance criteria are based on the product context and can be deviated from for individual risks in justified cases (e.g. explicit user acceptance, tailor-made products, contractual agreements) provided the transferred residual risk is communicated (6.6). Common factors used to set criteria:
+
+- intended purpose and reasonably foreseeable use;
+- regulatory factors (e.g. privacy or safety legislation);
+- nature of the risk — health/safety impact, and functionally-necessary risks that can't be mitigated without breaking the function;
+- nature of the product — operational environment factors, online hosting platform ect;
+- estimated number of products on the market (aggregated risk across many units can be unacceptable even if a single unit's risk is acceptable);
+- the user, number of impacted users, and their capability to mitigate risk further (6.2.1.6);
+- supply chain considerations — contractual agreements/business practice (if legal), downstream integrators (risk sharing/transfer when a risk can't be addressed).
+
+**6.3.3 Requirement:**
+
+- **[RMA-02-RQ-01]** The risk acceptance criteria shall be defined, justified for the product context (6.2), and documented, considering at least: relevant regulatory factors; supply chain considerations; nature of known risks; and state of the art. (NOTE: vertical standards can define/justify product-category risk acceptance criteria aligned to state of the art.)
+
+### 6.4 Product cybersecurity risk assessment
+
+**6.4.1 Rationale and guidance:** identifies, analyses and evaluates risk based on the product context (6.2) and risk acceptance criteria (6.3), via: asset identification (6.4.2); threat identification (6.4.3); risk analysis (6.4.4); risk evaluation (6.4.5).
+**6.4.1 Rationale and guidance:** The standard doesn't mandate a specific methodology, as long as risk estimation is based on likelihood × impact.
+
+#### 6.4.2 Product cybersecurity asset identification
+
+**6.4.2.1 Rationale and guidance:** determines what needs protecting and its cybersecurity properties (confidentiality, integrity, availability). Categories of assets, non-exhaustive:
+
+- product data/functions/components: data stored/processed/transmitted (e.g. crypto keys, auth tokens, personal/financial/log data); functions performed (e.g. configuration capability, communication, integrity of crypto protocols); software/hardware components and interfaces.
+- supporting assets: software/hardware components and interfaces; update and patch processes; the wider system (network, adjacent devices).
+- user-needs assets: user health and safety; protection of user data (e.g. against manipulation/fraud, privacy); availability of product functions; compatibility with Assistive Technology.
+- environment assets: the network and adjacent devices; health/safety of other persons or domestic animals; public interest in general.
+
+**6.4.2.3 Requirement:**
+
+- **[RMA-03-RQ-01]** The product cybersecurity assets and their cybersecurity properties to be protected shall be identified, based on the product context (6.2).
+
+#### 6.4.3 Product cybersecurity threat identification
+
+**6.4.3.1 Rationale and guidance:** determines the threats/vulnerabilities. Two activities:
+
+- **Threat identification** — threat modelling (can consider the product lifecycle, how the product functions, reasonably foreseeable misuse, threat actors/events). Example frameworks: **Attack Trees** (B. Schneier), **PASTA** (Risk Centric Threat Modeling — Tony UcedaVelez & Marco M. Morana), **STRIDE** ([OWASP Threat Modeling Process](https://owasp.org/www-community/Threat_Modeling_Process#stride)), and **TARA** (ISO/SAE 21434). Standards that require threat modelling: EN IEC 62443-4-1 and TVRA ETSI TS 102 165-1.
+- **Vulnerability identification**
+
+**6.4.3.3 Requirement:**
+
+- **[RMA-04-RQ-01]** Product cybersecurity threats shall be identified, including: the targeted asset(s) and their potentially compromised cybersecurity properties (6.4.2); and the cause of the potential compromise.
+
+#### 6.4.4 Product cybersecurity risk analysis
+
+**6.4.4.1 Rationale and guidance:** estimates **likelihood** of occurrence and **impact** (magnitude of loss/disruption) of a potential incident due to each identified threat, qualitatively or quantitatively, from the perspective of potentially-affected users.
+**6.4.4.1 Rationale and guidance:** Likelihood can consider discoverability/speed of materialisation;
+**6.4.4.1 Rationale and guidance:** impact can consider health/safety, data loss, economic loss, and accessibility impact.
+
+**6.4.4.3 Requirement:**
+
+- **[RMA-05-RQ-01]** The likelihood of occurrence of a cybersecurity incident shall be estimated for each identified threat from 6.4.3.
+- **[RMA-05-RQ-02]** The impact of the potential cybersecurity incident shall be estimated for each identified threat from 6.4.3.
+- **[RMA-05-RQ-03]** The scenario of the potential cybersecurity incident in which the risk exists shall be documented.
+
+#### 6.4.5 Product cybersecurity risk evaluation and risk acceptance
+
+**6.4.5.1 Rationale and guidance:** compares each identified risk against the pre-established risk acceptance criteria (6.3) and justifies acceptable (residual) risk.
+**6.4.5.1 Rationale and guidance:** Risk sharing does not release the manufacturer of its legal obligations
+
+**6.4.5.3 Requirement:**
+
+- **[RMA-06-RQ-01]** Each risk shall be evaluated against the risk acceptance criteria to determine if it is acceptable or requires treatment.
+- **[RMA-06-RQ-02]** Risks shall only be accepted when acceptable according to the risk acceptance criteria.
+- **[RMA-06-RQ-03]** Where mitigation requires user action or specific operational environments (conditions of use), based on the product context (6.2), risks shall only be accepted if the recommended mitigation is within the capability of the intended users, given their expected knowledge/ability.
+- **[RMA-06-RQ-04]** Accepted risks shall be justified.
+
+### 6.5 Product cybersecurity risk treatment
+
+**6.5.1 Rationale and guidance:** aims to make residual risk acceptable, via:
+**6.5.1 Rationale and guidance:** risk avoidance: removing the source, e.g. unnecessary interfaces, immature libraries/unsafe legacy protocols, or unnecessary plug-in or scripting support.
+**6.5.1 Rationale and guidance:** risk mitigation: controls that change likelihood or impact.
+**6.5.1 Rationale and guidance:** If a risk can't be avoided or mitigated, altering the product context may help. Some risk is inherent to the product's function and can't be avoided.
+
+**6.5.3 Requirement:**
+
+- **[RMA-07-RQ-01]** Each risk found unacceptable against the risk acceptance criteria (6.4.5) shall be treated (6.5).
+- **[RMA-07-RQ-02]** The risk treatment decision and its rationale shall be documented.
+- **[RMA-07-RQ-03]** After risk treatment, the risks shall be re-evaluated.
+
+### 6.6 Product cybersecurity risk communication
+
+**6.6.1 Rationale and guidance:** it is necessary to clearly communicate all relevant risks transferred to the user,
+**6.6.1 Rationale and guidance:** consider accessibility where appropriate (e.g. simple language, multi-modal formats).
+
+**6.6.3 Requirement:**
+
+- **[RMA-08-RQ-01]** Communication of relevant risks to users shall use methods and terminology that meet their communication needs, ensuring clear, non-technical language for consumers where possible.
+- **[RMA-08-RQ-02]** Product risk communication shall consider accessibility aspects (e.g. simple language, multi-modal formats) for the user.
+- **[RMA-08-RQ-03]** Communication of the product's risks to the user shall include: disclosure of circumstances related to the product context and reasonably foreseeable misuse that can lead to significant cybersecurity risks; recommended mitigation measures for the user (e.g. environment for use, integration, operation); and the conditions of use to securely use the product.
+
+### 6.7 Product cybersecurity risk review
+
+**6.7.1 Rationale and guidance:** review (and update if necessary) risk management elements.
+
+**6.7.3 Requirement:**
+
+- **[RMA-09-RQ-01]** Product cybersecurity risk management activities shall be reviewed at planned intervals, based on the risk assessment and the product context.
+- **[RMA-09-RQ-02]** The review shall also be performed:
+  - when the product is subject to a modification that might impact cybersecurity;
+  - when the product's context changes;
+  - when the risk acceptance criteria change over the product lifecycle;
+  - when the product's cybersecurity risk exposure changes (including changes to the threat landscape);
+  - when a known-exploitable or actively-exploited vulnerability is identified;
+  - when a severe incident occurs; and
+  - when a component becomes obsolete and impacts the product's cybersecurity.
+- **[RMA-09-RQ-03]** If impacted, the relevant risk assessment documentation of Clause 6 shall be updated.
+
+## Clause 7 — Product cybersecurity lifecycle activities
+
+Note: Clause 7 is a bit more difficult to read, but if it is read with the mindset
+of this being how you implement a DevOps mindset (tickets, feedback, review, testing,
+deployment, etc.), then it makes a bit more sense.
+
+### 7.2 Product cybersecurity planning
+
+**7.2.1 Rationale and guidance:** Describes the cybersecurity activities for a product across its lifecycle;
+**7.2.1 Rationale and guidance:** Usually documented as a **product cybersecurity plan** — often a living document that starts blank and evolves.
+**7.2.1 Rationale and guidance:** Planning can cover roles/responsibilities and ensuring personnel are adequately trained;
+
+Planning spans the Clause 6 risk-management activities plus the rest of Clause 7 — i.e. the activities covered in the sections below:
+
+- product cybersecurity requirements (7.3);
+- cybersecurity architecture and design (7.4);
+- secure implementation (7.5);
+- cybersecurity verification and validation (7.6);
+- secure production and distribution (7.7);
+- product cybersecurity monitoring and issue management (7.8);
+- planning for secure decommissioning (7.9);
+- third-party component cybersecurity management (7.10).
+
+**7.2.3 Requirement** — _[CLA-01-RQ-01/02] omitted to respect the standard's copyright (public repo). They require the plan to cover at least the activities listed above, and to maintain, review, and track their execution across the product lifecycle. See the draft EN 40000-1-2 for the authoritative text._
+
+### 7.3 Product cybersecurity requirements
+
+**7.3.1 Rationale and guidance:** requirements are based on the product context and derived from the risk assessment; they describe what needs to be implemented,
+**7.3.1 Rationale and guidance:** requirements identification typically considers traceability, validity, understandability and verifiability. They are a foundational input for the rest of Clause 7.
+
+**7.3.3 Requirement** — _[CLA-02-RQ-01/02] omitted to respect the standard's copyright (public repo). They require specifying product cybersecurity requirements from the product context, the risk-treatment decisions, and regulatory inputs (e.g. GDPR data-minimisation), and reviewing them when those inputs change. See the draft EN 40000-1-2 for the authoritative text._
+
+### 7.4 Cybersecurity architecture and design
+
+**7.4.1 Rationale and guidance:** architecture/design align with the requirements (7.3) and product context (6.2),
+
+**7.4.3 Requirement** — _[CLA-03-RQ-01/02] omitted to respect the standard's copyright (public repo). They require specifying the cybersecurity architecture/design (selecting controls that fulfil 7.3, applying the 5.3 security-by-design and 5.4 secure-by-default principles) and maintaining cybersecurity through component integration, including third-party components and remote data processing solutions. See the draft EN 40000-1-2 for the authoritative text._
+
+### 7.5 Secure implementation
+
+**7.5.1 Rationale and guidance:** develops the product per the requirements (7.3) and architecture/design (7.4),
+
+**7.5.3 Requirement** — _[CLA-04-RQ-01…07] omitted to respect the standard's copyright (public repo). They cover secure development in a secure environment, implementing all 7.3 requirements per the 7.4 design, identifying and maintaining the integrated-component list, **creating and maintaining an SBOM**, preparing technical documentation and user information, and triggering risk-management review (6.7) when implementation deviates from the design. See the draft EN 40000-1-2 for the authoritative text._
+
+### 7.6 Cybersecurity verification and validation
+
+**7.6.1 Rationale and guidance:** V&V confirms the concept, design and implementation satisfy the cybersecurity requirements (7.3.4) and that implemented controls are effective.
+**7.6.1 Rationale and guidance:** Regulatory conformance assessment is out of scope of this activity.
+**7.6.1 Rationale and guidance:** V&V recurs throughout the lifecycle (not just at the end), is usually repeated after changes/maintenance/new vulnerabilities, and can trigger design changes.
+
+Approaches include:
+
+- **Cybersecurity analysis** — systematic examination of artefacts (architecture/design docs, user/technical docs, code, drawings/schematics), including static/dynamic code analysis, inspections, peer review; manual or automated.
+- **Vulnerability scanning** — identify/assess vulnerabilities in software/hardware components (see 7.8); tooling, vulnerability-database queries, defect-class indicators.
+- **Hardware cybersecurity testing** — robustness against physical attacks: side-channel countermeasures, fault-injection resistance (voltage/clock/EM), verifying debug interfaces are disabled in manufacturing.
+
+Testing techniques:
+
+- functional testing (conformance to requirements);
+- unit testing;
+- integration testing;
+- system testing (incl. resilience to attack scenarios);
+- fuzz testing;
+- stress testing;
+- penetration testing.
+
+**7.6.3 Requirement** — _[CLA-05-RQ-01…06] omitted to respect the standard's copyright (public repo). They cover verifying controls against 7.3, validating the product as secure in its context (6.2) based on the risk assessment (6.4), the recurring V&V scope (artefact analysis, error/input-data handling, interface/protocol checks, additional security testing incl. penetration testing, documentation review, risk-treatment alignment), running V&V recurrently aligned with 7.8, confirming integrated-component risks are addressed, and selecting test methods. See the draft EN 40000-1-2 for the authoritative text._
+
+### 7.7 Secure production and distribution
+
+**7.7.1 Rationale and guidance:** manages cybersecurity risk in producing/manufacturing/compiling and distributing the product
+
+**7.7.1 Rationale and guidance:** A secure production control plan typically covers:
+
+- cybersecurity-relevant production instructions;
+- measures preventing unauthorized alteration during production;
+- methods to confirm the product was produced per the cybersecurity requirements.
+
+#### 7.7.2 Production and distribution of digital software products
+
+**7.7.2.1 Rationale and guidance:** covers
+
+- compiling, building, packaging and preparing software artefacts for digital distribution
+- reducing the risk of manipulation by external actors (e.g. via an app store).
+- Sharing information/instructions to the user digitally is also in scope.
+
+**7.7.2.3 Requirement** — _[CLA-06-RQ-01…04] omitted to respect the standard's copyright (public repo). They require protecting digital software products/updates from manipulation in transit and at rest (authenticated access to the hosting platform, artefact integrity and authenticity), protecting user information during distribution, and making it available in an accessible manner. See the draft EN 40000-1-2 for the authoritative text._
+
+#### 7.7.3 Production and distribution of physical products
+
+**7.7.3.1 Rationale and guidance:** covers
+
+- production of tangible products (hardware component, or physical media such as memory cards/CDs),
+- reducing the risk of manipulation of the production process by external actors.
+- Aspects to consider:
+  - change-management for process changes (verified for cybersecurity impact);
+  - protection of manufacturing systems/processes; protection of data supporting secure manufacturing;
+  - tamper-resistance/tamper-evidence for packaged products.
+
+**7.7.3.3 Requirement** — _[CLA-07-RQ-01/02] omitted to respect the standard's copyright (public repo). They require addressing manipulation/alteration of hardware or physical-media products during manufacturing — protecting work instructions, verifying expected components and their firmware/software/data, protecting installed software/keys/config (incl. restricting embedded programming/test interfaces), and managing cybersecurity features such as PKI. See the draft EN 40000-1-2 for the authoritative text._
+
+### 7.8 Product cybersecurity monitoring and issue management
+
+**7.8.1 Rationale and guidance:**
+
+- cybersecurity issues include vulnerabilities and incidents affecting the product
+- Monitoring the threat landscape detects new vulnerabilities and supports incident prevention;
+- issue management ensures identified issues are handled/resolved — a key maintenance activity.
+
+**7.8.3 Requirement** — _[CLA-08-RQ-01…04] omitted to respect the standard's copyright (public repo). They require monitoring and reacting to changes in the risk assessment (6.4) — including incidents and vulnerabilities — at justifiable intervals, addressing discovered vulnerabilities per 6.4/6.6, addressing verified incidents without undue delay, and communicating relevant residual risk per 6.6. See the draft EN 40000-1-2 for the authoritative text._
+
+### 7.9 Planning for secure decommissioning
+
+**7.9.1 Rationale and guidance:** preparing to securely reset/retire a product so the user's assets aren't compromised.
+**7.9.1 Rationale and guidance:** Users must also be informed about the end of the support period and its impact, in clear/simple/accessible language
+
+**7.9.3 Requirement** — _[CLA-09-RQ-01/02] omitted to respect the standard's copyright (public repo). They require preparing for secure decommissioning (identifying confidential assets needing secure deletion and where they live, third-party/manufacturer-operated parts, user information and the method of informing users) and providing user instructions (data removal/export, removing cybersecurity assets, removal from the operational environment, secure disposal, and what auto-removed data is deleted and when). See the draft EN 40000-1-2 for the authoritative text._
+
+### 7.10 Third-party component cybersecurity management
+
+**7.10.1 Rationale and guidance:** third-party components (commercial, free and open-source) can introduce cybersecurity risk — vulnerabilities in them can compromise the product. Due diligence tasks include:
+
+- assessing that the component's IPRFU aligns with its use/integration in the product;
+- evaluating legal/contractual/cybersecurity-requirement compliance, e.g. by checking for: a CRA CE marking / EU Declaration of Conformity (if available); no relevant known vulnerabilities in a public vulnerability database (e.g. the EU vulnerability database under Article 12(2) of the NIS2 Directive, (EU) 2022/2555); availability of cybersecurity patches; vulnerability disclosure/handling; a risk assessment; whether additional cybersecurity testing is needed; technical verification (binary analysis, source-code scanning, rebuild from source, code review);
+- considering the component's support period (avoiding deprecated components/obsolete tech);
+- for FOSS specifically, checking: active maintenance (evidence of recent activity); a defined, public vulnerability disclosure process; whether it's stewarded by a foundation/organization for commercial use; indicators of secure-by-design practice (documented secure development practices); availability of regular patches/updates;
+- assessing the component's risk and its integration in the Clause 6.4 risk assessment;
+- securely incorporating it per Clause 7.4 and 7.5;
+- checking whether additional cybersecurity testing is required;
+- monitoring it for vulnerabilities over the product lifecycle per 7.8;
+- communicating newly found vulnerabilities in the component, and sharing potential solutions if available.
+
+"Third-party" here can be a supplier, service provider, open-source steward, or any party that can help handle a discovered vulnerability. Upstream contribution (submitting fixes to the original project) is a valid risk-treatment option for future product versions. NOTE: align responsibilities with suppliers and document them before market placement, to support 7.10.3 and consistent supply-chain collaboration. NOTE: manufacturers should adapt due diligence to the nature of FOSS — code/activity can be assessed directly, but formal support arrangements with FOSS providers may be impossible even though third-party expertise may still be available.
+
+**7.10.3 Requirement** — _[CLA-10-RQ-01…05] omitted to respect the standard's copyright (public repo). They require performing due diligence on third-party components before integration, including them in the Clause 6 risk assessment/treatment, implementing and integrating them securely per 7.5, verifying and validating them per 7.6, and monitoring them over their lifecycle per 7.8. See the draft EN 40000-1-2 for the authoritative text._
+
+## Annex A (informative) — Coherence elements for vertical standards
+
+## Annex B (informative) — Accessible and inclusive cybersecurity
+
+**B.1 Scope and rationale:** aims to help manufacturers of consumer cyber products build products that are both secure and accessible.
+**B.1 Scope and rationale:** Ties the European Accessibility Act (EAA, Directive (EU) 2019/882) to the CRA
+
+## Annex C (informative) — Interaction of the risk management concepts and activities

@@ -1,0 +1,40 @@
+---
+title: 00 - Legislation
+description: Notes on laws and regulations relevant to this compliance-as-code proof of concept.
+sidebar_position: 1
+tags:
+  - legislation
+  - compliance
+  - cra
+---
+
+{/* Hidden search synonyms */}
+
+<span style={{ display: 'none' }}>
+  legislation law regulation compliance cyber resilience act cra gdpr ai act accessibility
+</span>
+
+This folder is a working index of legislation. I keep notes on as part of this proof of concept.
+Some entries track legislation I am actively applying to a real project; others are kept purely for reference because they relate to the same space.
+Each page should turn a source text into traceable input for requirements, operating procedures, risk assessments, or compliance evidence.
+
+The goal is not to reproduce a law text. Keep notes short and ALWAYS record the specific article, section, or official source that supports the note.
+
+## Legislation register
+
+| Legislation                                                    | What it covers                                                                           | Why it's here                                                                | Current understanding                                           |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| [Cyber Resilience Act](./cra-cyber-resilience-act.mdx)         | EU cybersecurity requirements for products with digital elements across their lifecycle. | Primary legislation this PoC is built around.                                 | Reviewed; key obligations are split into focused notes.         |
+| [CRA Article 14](./cra-part-article-14.mdx)                    | Manufacturer reporting of actively exploited vulnerabilities and severe incidents.       | Drives the incident-handling workflow and reporting deadlines modelled here.   | Reviewed; operational summary maintained.                       |
+| [GDPR](./gdpr.mdx)                                             | Protection of personal data.                                                             | Kept for reference; revisit if the data handled here ever changes.            | Initial assessment; needs a proper legal review if that happens. |
+| [EU AI Act](./ai-act.mdx)                                      | Requirements for AI systems and providers.                                               | Kept for reference; not currently applicable to what's modelled here.         | Known, not assessed.                                            |
+| [European Accessibility Act](./european-accessibility-act.mdx) | Accessibility requirements for covered products and services.                            | Kept for reference; not currently applicable; worth keeping an eye on.        | Known, not assessed.                                            |
+
+## How to maintain these notes
+
+For each entry, capture only what's useful to understand the legislation's relevance:
+
+1. Identify the official source and the exact article, clause, or section.
+2. Explain the implication in plain language.
+3. Link to the downstream requirement, process, risk, or evidence page when one exists.
+4. Record open questions and the current understanding status.

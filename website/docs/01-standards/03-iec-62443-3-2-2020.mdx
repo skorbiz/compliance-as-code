@@ -1,0 +1,155 @@
+---
+title: IEC 62443-3-2:2020 — Security risk assessment for system design
+sidebar_label: IEC 62443-3-2:2020
+description: Working notes on IEC 62443-3-2:2020 risk assessment for industrial automation and control systems.
+tags:
+  - standards
+  - iec 62443
+  - risk assessment
+  - iacs
+---
+
+**Source status:** DS/EN IEC 62443-3-2:2020. See the [IEC 62443 series index](./02-iec-62443.mdx).
+
+## Overview
+
+The IEC 62443-3-2 defines a workflow for cyber-oriented risk assessment
+related to industrial automation and control systems (IACS).
+It outlines the risk-assessment procedure and the accompanying documentation.
+
+- Defining product context, including zone and conduits (fancy name for network segments and logical groupings).
+- Establishing targeted security level (SL-T)
+- Risk assessment procedure
+- Documenting the risk assessment
+
+:::info Copyright & redaction
+The ZCR procedure is copyrighted (DS/EN IEC 62443-3-2:2020). To show the method without reproducing the full normative
+text in a public repo, the seven-step workflow (ZCR 1–7) is kept as the general process, but the two long enumerated
+steps — the detailed risk loop (ZCR 5) and the CRS contents (ZCR 6) — keep the first item as a format example with the
+remainder summarised and marked:
+
+> _ZCR x.y–x.z omitted to respect the standard's copyright (public repo) — see DS/EN IEC 62443-3-2:2020 for the authoritative list._
+:::
+
+## Clause 3 — Key terms
+
+- **zone** — grouping of logical or physical assets based on risk or other criteria (criticality, function, location,
+  required access, responsible organization).
+- **conduit** — logical grouping of communication channels that share common security requirements, connecting two
+  or more zones.
+- **SUC (system under consideration)** — defined collection of IACS assets needed for a complete automation
+  solution; consists of one or more zones and conduits.
+- **threat** — circumstance or event with the potential to adversely impact operations or assets.
+- **vulnerability** — flaw or weakness in a system's design, implementation, or operation that could be exploited.
+- **likelihood** — chance of something happening; **consequence** — result of an incident; **impact** — measure of
+  the ultimate loss/harm from a consequence (e.g. consequence = a spill, impact = the $100k clean-up cost).
+- **risk** — expectation of loss expressed as the likelihood a threat will exploit a vulnerability with a given
+  consequence.
+- **tolerable risk** — level of risk deemed acceptable by the organization.
+- **unmitigated cyber security risk** — risk level before any countermeasures are considered.
+- **residual risk** — risk remaining after existing countermeasures are applied.
+- **SL / SL-T / SL-A / SL-C** — security level / target / achieved / capability (see Annex A below).
+
+## Clause 4 — Zone, conduit and risk assessment requirements
+
+Figure 1 in the standard walks the seven ZCRs end-to-end: identify the SUC → initial risk assessment → partition
+into zones/conduits → compare risk to tolerable risk → detailed risk assessment per zone/conduit → document the
+cyber security requirements specification (CRS) → asset owner approval.
+
+### ZCR 1 — Identify the SUC
+
+**ZCR 1.1 — Identify the system under consideration (SUC) and access points.** Clearly identify the SUC, including a clear demarcation
+of the security perimeter and all access points. System inventory, architecture diagrams, network diagrams and
+dataflows are typically used to determine and illustrate this. Also identify tolerable risks, assets, and other relevant characteristics
+
+### ZCR 2 — Initial cyber security risk assessment
+
+**ZCR 2.1 — Perform initial cyber security risk assessment.** Assess the worst-case unmitigated risk impact on IACS operations.
+It is used to prioritize the detailed risk assessment and the grouping of assets into zones and conduits.
+
+### ZCR 3 — Partition the SUC into zones and conduits
+
+- **ZCR 3.1 — Establish zones and conduits.** Group IACS and related assets into zones or conduits as determined by
+  the initial risk assessment or other criteria (criticality, function, location, required access, responsible
+  organization). Special attention should go to safety instrumented systems, wireless systems, systems directly
+  connected to the Internet, systems managed by other entities, and mobile devices.
+- **ZCR 3.2 — Separate business and IACS assets.** IACS assets shall be grouped into zones logically or physically.
+  These do not need to follow business/enterprise system assets.
+- **ZCR 3.3 — Separate safety related assets.** Safety-related IACS assets shall be grouped into zones separate from
+  non-safety-related assets; if they cannot be separated, the entire zone shall be identified as a safety-related
+  zone.
+- **ZCR 3.4 — Separate temporarily connected devices** _(recommendation)_. Devices that are permitted to make
+  temporary connections (maintenance laptops, portable USB devices, etc.) should be in their own zone(s) — they're
+  exposed to a wider variety of threats than permanently connected assets.
+- **ZCR 3.5 — Separate wireless devices** _(recommendation)_. Wireless devices should be in zone(s) separate from
+  wired devices; wireless signals aren't contained by fences/cabinets and so are more accessible. The wireless
+  access point is typically modelled as the conduit between the wireless and wired zones.
+- **ZCR 3.6 — Separate devices connected via external networks** _(recommendation)_. Devices with remote access via
+  networks external to the SUC (e.g. vendor/support access) should be grouped into their own zone(s).
+
+### ZCR 4 — Risk comparison
+
+**ZCR 4.1 — Compare initial risk to tolerable risk.** If the initial risk exceeds tolerable risk, the organization
+shall perform a detailed cyber security risk assessment (ZCR 5).
+
+### ZCR 5 — Perform a detailed cyber security risk assessment
+
+Applied per zone/conduit — similar zones/conduits with shared threats and assets may be grouped for analysis.
+Any established methodology (ISO 31000, NIST SP 800-39, ISO/IEC 27005) may be used.
+
+- **ZCR 5.1 — Identify threats.** List threats affecting the zone/conduit's assets, each with a description of:
+  - the threat source
+  - its capability/skill level
+  - possible threat vectors
+  - affected asset(s)
+  - Example: a non-malicious employee physically accesses the control zone and plugs in a USB stick.
+
+> _ZCR 5.2–5.13 omitted to respect the standard's copyright (public repo). They walk the detailed risk loop per
+> threat: identify vulnerabilities (5.2) → determine consequence/impact (5.3) → unmitigated likelihood (5.4) →
+> unmitigated risk, typically via a risk matrix (5.5) → set the zone/conduit SL-T (5.6) → compare to tolerable risk
+> (5.7) → identify countermeasures and re-evaluate down to a residual risk (5.8–5.11) → identify additional
+> countermeasures, with IEC 62443-3-3 SL-C ratings guiding selection (5.12) → document and communicate the result as a
+> living document, usable for later testing/auditing/reassessment (5.13). See DS/EN IEC 62443-3-2:2020 for the
+> authoritative text._
+
+### ZCR 6 — Document cyber security requirements, assumptions and constraints
+
+A **cyber security requirements specification (CRS)** documents mandatory countermeasures from the detailed risk
+assessment plus general requirements from company/site policy, standards, and regulation. It doesn't need to be a
+single document. At minimum it includes:
+
+- **ZCR 6.2 — SUC description.** At minimum the CRS shall include name, high-level description of function and intended usage, and a description of
+  the controlled equipment or process.
+
+> _ZCR 6.3–6.9 omitted to respect the standard's copyright (public repo). They enumerate the rest of the CRS contents:
+> zone/conduit drawings (6.3), per-zone/conduit characteristics (6.4), operating-environment assumptions (6.5), the
+> threat environment (6.6), organizational security policies (6.7), tolerable risk (6.8), and regulatory requirements
+> (6.9). See DS/EN IEC 62443-3-2:2020 for the authoritative text._
+
+**ZCR 6.2 Rationale and supplemental guidance:** An illustration of the system under consideration (SUC) and the associated data flows and process flows should be included.
+
+### ZCR 7 — Asset owner approval
+
+**ZCR 7.1 — Attain asset owner approval.** The asset owner shall review and approve the result of the risk assessment. The people best qualified to perform the risk assessment do not necessarily have the authority to approve it.
+
+## Annex A — Security levels (informative)
+
+IEC 62443-1-1 defines the four SLs (SL 0 is implicitly "no security requirements necessary"); IEC 62443-4-2 applies them to component requirements.
+
+- **SL 1** — protection against casual or coincidental violation.
+- **SL 2** — protection against intentional violation using simple means, low resources, generic skills, low
+  motivation.
+- **SL 3** — protection against intentional violation using sophisticated means, moderate resources, IACS-specific
+  skills, moderate motivation.
+- **SL 4** — protection against intentional violation using sophisticated means, extended resources, IACS-specific
+  skills, high motivation.
+
+IEC 62443-3-3 splits SL usage into three types: **SL-T** (target — the desired level, from the risk assessment),
+**SL-A** (achieved — measured on the actual design/system and compared to the SL-T), and **SL-C** (capability — what
+a component/system natively provides when properly configured, see
+[IEC 62443-3-3](./04-iec-62443-3-3-2019.mdx)).
+
+## Annex B — Risk matrices (informative)
+
+A risk matrix is a 2-dimensional qualitative tool for determining risk rank: likelihood on one axis, consequence/
+severity on the other. A risk matrix is always 2-dimensional but the size can vary.
