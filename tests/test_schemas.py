@@ -16,8 +16,8 @@ class TestYAMLValidation:
         with open("model/risk_model.yaml") as f:
             data = yaml.safe_load(f)
         model = RiskModel.model_validate(data)
-        assert len(model.severity_levels) > 0
-        assert len(model.probability_levels) > 0
+        assert len(model.impact_levels) > 0
+        assert len(model.likelihood_levels) > 0
 
     def test_risk_register_validates(self):
         with open("model/risks.yaml") as f:
@@ -43,4 +43,5 @@ class TestYAMLValidation:
         
         valid_categories = {cat.id for cat in model.risk_categories}
         for risk in register.risks:
-            assert risk.category in valid_categories, f"{risk.id} has invalid category"
+            for category in risk.category:
+                assert category in valid_categories, f"{risk.id} has invalid category {category!r}"

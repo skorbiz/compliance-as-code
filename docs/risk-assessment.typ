@@ -7,25 +7,32 @@
 #let risk_data = yaml("/model/risks.yaml")
 #let metadata = risk_data.metadata
 
-// Calculate risk score
-#let calc_risk(severity, probability) = {
-  let sev_val = model.severity_levels.at(severity).value
-  let prob_val = model.probability_levels.at(probability).value
-  sev_val * prob_val
+// IEC 62443-3-3 foundational-requirement id -> display name
+#let category_names = (:)
+#for c in model.risk_categories {
+  category_names.insert(c.id, c.name)
 }
 
-// Get risk level based on score
-#let get_risk_level(score) = {
-  if score >= 15 {
-    ("critical", "#8B0000")
-  } else if score >= 10 {
-    ("high", "#DC143C")
-  } else if score >= 6 {
-    ("medium", "#FFA500")
-  } else {
-    ("low", "#90EE90")
-  }
+// Calculate risk score (impact value x likelihood value)
+#let calc_risk(impact, likelihood) = {
+  let impact_val = model.impact_levels.at(impact).value
+  let likelihood_val = model.likelihood_levels.at(likelihood).value
+  impact_val * likelihood_val
 }
+
+// Get risk level (key + definition) for a score, from risk_levels in risk_model.yaml.
+// risk_levels is ordered highest threshold first, so the first match wins.
+#let get_risk_level(score) = {
+  let result = none
+  for (k, v) in model.risk_levels.pairs() {
+    if result == none and score >= v.threshold {
+      result = (k, v)
+    }
+  }
+  result
+}
+
+#let pretty(key) = upper(key.at(0)) + key.slice(1)
 
 // Title page
 #align(center)[
@@ -43,8 +50,9 @@
     columns: (auto, 1fr),
     stroke: none,
     [*Assessment Date:*], [#metadata.assessment_date],
-    [*Assessor:*], [#metadata.assessor],
-    [*Next Review:*], [#metadata.review_date],
+    [*Assessors:*], [#metadata.assessors],
+    [*Reviewer:*], [#metadata.reviewer],
+    [*Next Review:*], [#if metadata.review_date == none [_Pending_] else [#metadata.review_date]],
   )
 ]
 
@@ -56,31 +64,69 @@
 
 This document presents a cybersecurity risk assessment for #metadata.product_name in accordance with the EU Cyber Resilience Act (CRA).
 
+*Scope:* #metadata.scope
+
 *Total Risks Identified:* #risk_data.risks.len()
 
 #pagebreak()
 
 = Risk Assessment Methodology
 
-Risk Score = Severity × Probability (scale 1-5 each, max score 25)
+Risk Score = Impact × Likelihood (scale 1-4 each, 0 for unscored; max score 16)
 
-== Severity Levels
+== Impact Levels
+
+#table(
+  columns: (auto, auto, auto),
+  stroke: 0.5pt,
+  [*Level*], [*Value*], [*Color*],
+  ..model.impact_levels.pairs().map(((k, v)) => (
+    [#pretty(k)],
+    [#v.value],
+    box(fill: rgb(v.color), width: 1cm, height: 0.5cm),
+  )).flatten()
+)
+
+== Likelihood Levels
+
+#table(
+  columns: (auto, auto),
+  stroke: 0.5pt,
+  [*Level*], [*Value*],
+  ..model.likelihood_levels.pairs().map(((k, v)) => ([#pretty(k)], [#v.value])).flatten()
+)
+
+== Risk Levels
+
+#table(
+  columns: (auto, auto, 1fr, 1fr),
+  stroke: 0.5pt,
+  [*Level*], [*Threshold*], [*Description*], [*Action*],
+  ..model.risk_levels.pairs().map(((k, v)) => (
+    box(fill: rgb(v.color), inset: 4pt, radius: 2pt)[
+      #text(fill: white, weight: "bold", size: 9pt)[#upper(pretty(k))]
+    ],
+    [#v.threshold],
+    [#v.description],
+    [#v.action],
+  )).flatten()
+)
+
+== Risk Categories
+
+Each risk may optionally be tagged with one or more IEC 62443-3-3 foundational requirements (FRs):
 
 #table(
   columns: (auto, auto, 1fr),
   stroke: 0.5pt,
-  [*Level*], [*Value*], [*Description*],
-  ..model.severity_levels.pairs().map(((k, v)) => ([#k], [#v.value], [#v.description])).flatten()
+  [*ID*], [*Name*], [*Description*],
+  ..model.risk_categories.map((c) => ([#upper(c.id)], [#c.name], [#c.description])).flatten()
 )
 
-== Probability Levels
+== Risk Treatment
 
-#table(
-  columns: (auto, auto, 1fr),
-  stroke: 0.5pt,
-  [*Level*], [*Value*], [*Description*],
-  ..model.probability_levels.pairs().map(((k, v)) => ([#k], [#v.value], [#v.description])).flatten()
-)
+Every risk records an explicit treatment decision: *undecided* (no decision yet), *accept* (tolerated as-is),
+*transfer* (shifted to a third party), or *mitigate* (reduced through additional controls).
 
 #pagebreak()
 
@@ -95,44 +141,52 @@ Risk Score = Severity × Probability (scale 1-5 each, max score 25)
     column-gutter: 1em,
     
     [*Risk ID:*], [#risk.id],
-    [*Category:*], [#risk.category],
-    [*CRA Requirement:*], [#risk.cra_requirement],
+    [*Category:*], [#if risk.category.len() > 0 [#risk.category.map((id) => category_names.at(id, default: id)).join(", ")] else [—]],
+    [*Zone:*], [#upper(risk.zone_edge_cloud)],
+    [*Conduit / exposure area:*], [#risk.conduit_or_exposure_area],
+    [*Phases:*], [#risk.phases.map(pretty).join(", ")],
+    [*Treatment:*], [#pretty(risk.treatment)],
   )
   
   #v(0.5em)
   
-  === Description
-  #risk.description
-  
-  === Threat Source
-  #risk.threat_source
+  #if risk.iec_62443_3_3_requirement_inspiration != "" [
+    === IEC 62443-3-3 Requirement Inspiration
+    #risk.iec_62443_3_3_requirement_inspiration
+  ]
   
   === Vulnerability
-  #risk.vulnerability
+  #if risk.vulnerability != "" [#risk.vulnerability] else [—]
+  
+  === Threat
+  #risk.threat
+  
+  === Consequence
+  #risk.consequence
   
   === Initial Risk Assessment
   
-  #let initial_score = calc_risk(risk.impact, risk.probability)
-  #let (initial_level, initial_color) = get_risk_level(initial_score)
+  #let initial_score = calc_risk(risk.impact, risk.likelihood)
+  #let (initial_level, initial_def) = get_risk_level(initial_score)
   
   #grid(
     columns: (1fr, 1fr, 1fr, 1fr),
     row-gutter: 0.5em,
     column-gutter: 0.5em,
     
-    [*Impact*], [*Probability*], [*Risk Score*], [*Risk Level*],
+    [*Impact*], [*Likelihood*], [*Risk Score*], [*Risk Level*],
     
-    box(fill: rgb(model.severity_levels.at(risk.impact).color), inset: 5pt, radius: 2pt)[
+    box(fill: rgb(model.impact_levels.at(risk.impact).color), inset: 5pt, radius: 2pt)[
       #text(fill: white, weight: "bold", size: 9pt)[
         #upper(risk.impact)
       ]
     ],
     
-    [#upper(risk.probability)],
+    [#upper(risk.likelihood)],
     
     [#initial_score],
     
-    box(fill: rgb(initial_color), inset: 5pt, radius: 2pt)[
+    box(fill: rgb(initial_def.color), inset: 5pt, radius: 2pt)[
       #text(fill: white, weight: "bold", size: 9pt)[
         #upper(initial_level)
       ]
@@ -141,60 +195,73 @@ Risk Score = Severity × Probability (scale 1-5 each, max score 25)
   
   === Existing Controls
   
-  #for control in risk.existing_controls [
-    - #control
+  #if risk.existing_controls.len() > 0 [
+    #for control in risk.existing_controls [
+      - #control
+    ]
+  ] else [
+    _None_
   ]
   
   === Residual Risk Assessment
   
-  #let residual_score = calc_risk(risk.residual_risk_impact, risk.residual_risk_probability)
-  #let (residual_level, residual_color) = get_risk_level(residual_score)
-  
-  #grid(
-    columns: (1fr, 1fr, 1fr, 1fr),
-    row-gutter: 0.5em,
-    column-gutter: 0.5em,
+  #if risk.impact_residual != none [
+    #let residual_score = calc_risk(risk.impact_residual, risk.likelihood_residual)
+    #let (residual_level, residual_def) = get_risk_level(residual_score)
     
-    [*Impact*], [*Probability*], [*Risk Score*], [*Risk Level*],
-    
-    box(fill: rgb(model.severity_levels.at(risk.residual_risk_impact).color), inset: 5pt, radius: 2pt)[
-      #text(fill: white, weight: "bold", size: 9pt)[
-        #upper(risk.residual_risk_impact)
-      ]
-    ],
-    
-    [#upper(risk.residual_risk_probability)],
-    
-    [#residual_score],
-    
-    box(fill: rgb(residual_color), inset: 5pt, radius: 2pt)[
-      #text(fill: white, weight: "bold", size: 9pt)[
-        #upper(residual_level)
-      ]
-    ],
-  )
+    #grid(
+      columns: (1fr, 1fr, 1fr, 1fr),
+      row-gutter: 0.5em,
+      column-gutter: 0.5em,
+      
+      [*Impact*], [*Likelihood*], [*Risk Score*], [*Risk Level*],
+      
+      box(fill: rgb(model.impact_levels.at(risk.impact_residual).color), inset: 5pt, radius: 2pt)[
+        #text(fill: white, weight: "bold", size: 9pt)[
+          #upper(risk.impact_residual)
+        ]
+      ],
+      
+      [#upper(risk.likelihood_residual)],
+      
+      [#residual_score],
+      
+      box(fill: rgb(residual_def.color), inset: 5pt, radius: 2pt)[
+        #text(fill: white, weight: "bold", size: 9pt)[
+          #upper(residual_level)
+        ]
+      ],
+    )
+  ] else [
+    _Not yet assessed._
+  ]
   
   === Additional Controls
   
   #if risk.additional_controls.len() > 0 [
     #table(
-      columns: (2fr, 1fr, auto, auto),
+      columns: (1fr, 2fr, 1fr, auto),
       stroke: 0.5pt,
-      align: (left, left, center, center),
+      align: (left, left, left, center),
       
-      [*Control*], [*Responsible*], [*Deadline*], [*Status*],
+      [*Task*], [*Description*], [*Owner*], [*Due Date*],
       
       ..for ctrl in risk.additional_controls {
         (
-          ctrl.control,
-          ctrl.responsible,
-          str(ctrl.deadline),
-          if ctrl.status == "completed" [✓] else if ctrl.status == "in_progress" [⟳] else if ctrl.status == "ongoing" [∞] else [○],
+          ctrl.task,
+          ctrl.description,
+          ctrl.owner,
+          str(ctrl.due_date),
         )
       }
     )
   ] else [
     _No additional controls required._
+  ]
+  
+  #if risk.notes != "" [
+    === Notes
+    #risk.notes
   ]
   
   #v(1em)
@@ -213,4 +280,5 @@ This risk assessment shall be reviewed and updated:
 - Following security incidents
 - As required by regulatory updates
 
-*Next Scheduled Review:* #metadata.review_date
+*Next Scheduled Review:* #if metadata.review_date == none [_Pending_] else [#metadata.review_date]
+

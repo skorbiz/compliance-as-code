@@ -1,70 +1,359 @@
-# yaml-language-server: $schema=../schemas-generated/json-schemas/risk-register.schema.json
-# Risk Register - CRA Compliance
+# Sample risk register for CRA compliance (proof-of-concept data).
+# Scores and risk levels are computed at generation time; do not hand-maintain them.
+#
+# Field reference (full methodology: ../risk-assessment.mdx)
+# --------------------------------------------------------------
+# impact, impact_residual     — consequence severity, one of:
+#                                intolerable | undesirable | tolerable | acceptable
+# likelihood, likelihood_residual   — likelihood of the threat occurring, one of:
+#                                frequent | probable | possible | improbable
+#                                (the residual_* pair is optional but must be set together,
+#                                once existing_controls have been factored in)
+# treatment                   — risk-treatment decision (IEC 62443-3-2 ZCR 5.7 / 5.11); optional, one of:
+#                                undecided — no decision recorded yet (the default when omitted)
+#                                accept   — risk is tolerated as-is; no further action required
+#                                transfer — risk is shifted to a third party (e.g. insurance, vendor)
+#                                mitigate — risk is being reduced via additional_controls
+#                                (a risk may be 'accept' yet still list additional_controls that are
+#                                planned opportunistically rather than required)
+# category                    — optional list of zero or more IEC 62443-3-3 foundational
+#                                requirements (FRs) this risk relates to; see
+#                                ../01-standards/04-iec-62443-3-3-2019.mdx for the full definitions.
+#                                  iac — identification and authentication control
+#                                  uc  — use control (authorization, session/audit handling)
+#                                  si  — system integrity (tamper/malicious-code protection)
+#                                  dc  — data confidentiality (at rest and in transit)
+#                                  rdf — restricted data flow (network segmentation)
+#                                  tre — timely response to events (detection, audit access)
+#                                  ra  — resource availability (DoS resilience, backup/recovery)
+#
+# Example risk entry
+# --------------------------------------------------------------
+# - id: 'R000'
+#   title: 'Short, human-readable risk title'
+#   category: ['dc', 'si']                # optional, zero or more FR codes from the list above
+#   zone_edge_cloud: 'edge'                # edge | cloud | both
+#   conduit_or_exposure_area: 'Disk'       # the zone, conduit, or asset exposed to the risk
+#   phases: ['all']                        # all | commissioning | operation | maintenance | decommissioning
+#   iec_62443_3_3_requirement_inspiration: '' # optional, inspiration from an IEC 62443-3-3 SR/RE, not a compliance claim
+#   vulnerability: 'Flaw or weakness that enables the threat'
+#   threat: 'What could happen and how'
+#   consequence: 'What the outcome would be if the threat is realized'
+#   impact: 'tolerable'
+#   likelihood: 'possible'
+#   treatment: 'mitigate'                  # optional: undecided (default) | accept | transfer | mitigate
+#   existing_controls:
+#     - 'Countermeasure already in place'
+#   impact_residual: 'acceptable'          # optional, set together with likelihood_residual
+#   likelihood_residual: 'improbable'     # optional
+#   additional_controls:
+#     - task: 'Follow-up task title'
+#       description: 'More detail on the task'
+#       owner: 'team-name'
+#       due_date: '2027-01-01'
+#   notes: 'Free-text notes'
 
 metadata:
-  product_name: "Example Product"
-  version: "1.0.0"
-  assessment_date: "2026-02-11"
-  assessor: "Security Team"
-  review_date: "2026-08-11"
-  scope: "CRA compliance - software security risks"
+  product_name: 'Nimbus'
+  version: '0.1.0'
+  assessment_date: '2025-08-11'
+  assessors: 'Core engineering team (data engineering, software engineering, cloud engineering)'
+  review_date: null
+  reviewer: 'Engineering manager'
+  scope: 'CRA compliance - cybersecurity risks across the Nimbus edge-to-cloud platform'
 
 risks:
-  - id: "R001"
-    category: "data_security"
-    title: "Unauthorized access to user data"
-    description: "Attacker gains access to sensitive user data through authentication bypass"
-    threat_source: "External attacker"
-    vulnerability: "Weak encryption or access controls"
-    impact: "critical"
-    probability: "possible"
-    existing_controls:
-      - "Database encryption (AES-256)"
-      - "Role-based access control"
-    residual_risk_impact: "moderate"
-    residual_risk_probability: "unlikely"
-    additional_controls:
-      - control: "Implement field-level encryption for PII"
-        responsible: "Security team"
-        deadline: "2026-04-01"
-        status: "planned"
-    cra_requirement: "Article 13 - Cybersecurity requirements"
+  # Entries are grouped by zone (edge -> both -> cloud) and, within each zone, by
+  # the asset/theme they touch so near-identical workshop items sit together.
+  # IDs are stable identifiers, not positions: they may be non-sequential here, and
+  # new risks are appended with the next free number regardless of grouping.
 
-  - id: "R002"
-    category: "access_control"
-    title: "Brute force attack on authentication"
-    description: "Weak password policies enable credential guessing attacks"
-    threat_source: "External attacker"
-    vulnerability: "No rate limiting or account lockout"
-    impact: "critical"
-    probability: "likely"
-    existing_controls:
-      - "Password complexity requirements"
-      - "HTTPS for authentication"
-    residual_risk_impact: "moderate"
-    residual_risk_probability: "possible"
-    additional_controls:
-      - control: "Implement MFA"
-        responsible: "Development team"
-        deadline: "2026-03-30"
-        status: "in_progress"
-    cra_requirement: "Article 13(2) - Authentication mechanisms"
+  # ==========================================================================
+  # Edge zone
+  # ==========================================================================
 
-  - id: "R003"
-    category: "software_integrity"
-    title: "Malicious software update"
-    description: "Compromised update mechanism delivers malware"
-    threat_source: "Supply chain attack"
-    vulnerability: "Unsigned updates"
-    impact: "catastrophic"
-    probability: "unlikely"
-    existing_controls:
-      - "Code signing for releases"
-    residual_risk_impact: "critical"
-    residual_risk_probability: "rare"
+  # --- Data at rest (disk) ---
+  - id: 'R001'
+    title: 'Missing disk encryption'
+    category: ['dc']
+    zone_edge_cloud: 'edge'
+    conduit_or_exposure_area: 'Disk'
+    phases: ['all']
+    vulnerability: 'Missing full-disk encryption on edge devices'
+    threat: 'A person with physical access (opportunistic thief or non-malicious employee, low skill, minimal resources)
+      obtains an edge device through theft, loss, or decommissioning and reads the unencrypted disk directly'
+    consequence: 'Customer and machine data stored on the edge device is disclosed'
+    impact: 'tolerable'
+    likelihood: 'improbable'
+    treatment: 'mitigate'
+    existing_controls: []
+    notes: 'Disk encryption is not currently enabled on edge devices.'
     additional_controls:
-      - control: "Implement update verification"
-        responsible: "DevOps team"
-        deadline: "2026-05-01"
-        status: "planned"
-    cra_requirement: "Article 13(6) - Secure updates"
+      - task: 'Enable disk encryption'
+        description: 'Enable full-disk encryption on all new devices'
+        owner: 'core-team'
+        due_date: '2027-01-01'
+
+  - id: 'R038'
+    title: 'Edge device is easy to access on-site'
+    category: ['iac']
+    zone_edge_cloud: 'edge'
+    conduit_or_exposure_area: 'Physical site access'
+    phases: ['all']
+    vulnerability: 'The edge device is easy to access on-site'
+    threat: 'A person on the customer premises (visitor, contractor, or staff, low skill) physically reaches the unsecured edge device'
+    consequence: 'Opportunity to tamper with, power off, or attach media to the edge device'
+    impact: 'tolerable'
+    likelihood: 'improbable'
+    treatment: 'accept'
+    notes: 'Threat/consequence not filled in during the workshop.'
+
+  # --- Untrusted input to equipment interfaces ---
+  - id: 'R002'
+    title: 'Command ingestion from cockpit database'
+    category: ['si']
+    zone_edge_cloud: 'edge'
+    conduit_or_exposure_area: 'Cockpit database'
+    phases: ['all']
+    vulnerability: 'Insufficient input validation on free-text cockpit fields'
+    threat: 'An actor able to write to the shared cockpit database (malicious insider or compromised upstream system,
+      moderate skill) places crafted content in free-text cockpit fields that the platform ingests without validation'
+    consequence: 'Unauthorized commands could be executed, leading to potential system compromise or data loss'
+    impact: 'intolerable'
+    likelihood: 'possible'
+    treatment: 'accept'
+    existing_controls:
+      - 'Most cockpit fields have strict schemas and limited free-text fields, reducing the risk of command injection'
+    additional_controls:
+      - task: 'Input validation'
+        description: 'Implement input validation on free-text cockpit fields in the upcoming ingestion API'
+        owner: 'core-team'
+        due_date: '2027-01-01'
+
+  # --- Admin / remote access to the edge ---
+  - id: 'R014'
+    title: 'Unauthorized access to Balena portal'
+    category: ['iac']
+    zone_edge_cloud: 'edge'
+    conduit_or_exposure_area: 'Balena portal'
+    phases: ['all']
+    vulnerability: 'Compromised accounts grant fleet-wide control'
+    threat: 'An unauthorized actor (external attacker or former insider, moderate skill) gains access to the Balena
+      management portal, e.g. via stolen or weak credentials'
+    consequence: 'Shut down devices, change settings, break everything'
+    impact: 'intolerable'
+    likelihood: 'improbable'
+    treatment: 'accept'
+
+  # --- NATS network exposure ---
+  - id: 'R010'
+    title: 'Unauthenticated developer access to open NATS network'
+    category: ['iac', 'rdf']
+    zone_edge_cloud: 'edge'
+    conduit_or_exposure_area: 'NATS network'
+    phases: ['all']
+    vulnerability: 'Unprotected NATS network access on the edge'
+    threat:
+      'A future developer (trusted insider, non-malicious intent but unauthorized, connected to the local network)
+      discovers full unauthenticated read/write access to the local and cloud NATS servers'
+    consequence: 'Alter NATS JetStream configs on edge and cloud servers; flood local streams; flood cloud streams'
+    impact: 'undesirable'
+    likelihood: 'probable'
+    treatment: 'mitigate'
+    additional_controls:
+      - task: 'Assess and add access controls for the NATS network'
+        description: 'Placeholder follow-up task added while triaging the workshop notes; needs proper scoping.'
+        owner: 'core-team'
+        due_date: '2027-01-01'
+
+  # --- Physical & hardware ---
+  - id: 'R030'
+    title: 'Malicious or accidental USB insertion on edge device'
+    category: ['si']
+    zone_edge_cloud: 'edge'
+    conduit_or_exposure_area: 'USB / physical ports'
+    phases: ['all']
+    vulnerability: 'Edge device USB and physical ports are physically accessible'
+    threat: 'Either a malicious actor with physical access to the edge device (deliberate, moderate skill), or a
+      non-malicious developer during maintenance (trusted insider, unaware the media is infected), inserts a USB
+      device carrying malware into an exposed port'
+    consequence: 'Ability to execute code on the edge, taking down the whole platform and potentially connected machines'
+    impact: 'intolerable'
+    likelihood: 'improbable'
+    treatment: 'accept'
+    existing_controls:
+      - 'balenaOS is a minimal Linux distribution with no autorun/autoplay for removable media, so an inserted USB drive
+        is not automatically mounted or executed; running anything from it requires a manual action on the device'
+    impact_residual: 'undesirable'
+    likelihood_residual: 'improbable'
+    notes: 'Autorun behavior is based on standard balenaOS/Linux defaults'
+
+  - id: 'R027'
+    title: 'Sudden power loss corrupts edge device disk'
+    category: ['ra', 'si']
+    zone_edge_cloud: 'edge'
+    conduit_or_exposure_area: 'Edge device disk'
+    phases: ['all']
+    vulnerability: 'A sudden loss of power can corrupt in-flight writes on the edge device disk'
+    threat: 'An environmental or accidental event (power outage, no deliberate actor) cuts power to the edge device
+      while data is being written, corrupting the disk'
+    consequence: 'Buffered data is lost or the disk is corrupted until the device is restored'
+    impact: 'undesirable'
+    likelihood: 'possible'
+    treatment: 'accept'
+    existing_controls:
+      - 'NATS buffers data to disk before it is considered delivered'
+      - 'An ack/nack system ensures acknowledgements are only sent after data has been durably persisted'
+    impact_residual: 'undesirable'
+    likelihood_residual: 'improbable'
+
+  # ==========================================================================
+  # Both (edge and cloud)
+  # ==========================================================================
+
+  # --- Deployment pipeline ---
+  - id: 'R016'
+    title: 'Incorrect deployment corrupts production data integrity'
+    category: ['si']
+    zone_edge_cloud: 'both'
+    conduit_or_exposure_area: 'Deployment pipeline'
+    phases: ['maintenance']
+    vulnerability: 'No validation of updates and validation of the databases'
+    threat: 'A developer (trusted insider, non-malicious, high deployment privileges) mistakenly pushes an incorrect or
+      untested update'
+    consequence: 'The faulty update corrupts production data, causing a loss of data integrity'
+    impact: 'tolerable'
+    likelihood: 'probable'
+    treatment: 'accept'
+
+  # --- Credentials & identity ---
+  - id: 'R006'
+    title: 'Non-rotated credentials reused by a former employee or malicious software'
+    category: ['iac']
+    zone_edge_cloud: 'both'
+    conduit_or_exposure_area: 'Access keys / credentials'
+    phases: ['all']
+    vulnerability: 'Access keys and credentials are not rotated when staff leave, so old credentials remain valid'
+    threat: 'A former employee (insider knowledge, retains valid non-rotated credentials, high motivation), or malicious
+      software (e.g. a credential-scanning bot or malware that discovers an old leaked key), reuses non-rotated
+      credentials to access and damage the system'
+    consequence: 'Full system access'
+    impact: 'intolerable'
+    likelihood: 'improbable'
+    treatment: 'accept'
+
+  # --- Data in transit ---
+  - id: 'R036'
+    title: 'Unencrypted edge-to-cloud data transfer'
+    category: ['dc']
+    zone_edge_cloud: 'both'
+    conduit_or_exposure_area: 'Edge-to-cloud network transport'
+    phases: ['all']
+    vulnerability: 'Unencrypted data transfer between edge and cloud (unconfirmed)'
+    threat: 'An actor able to observe network traffic between edge and cloud (on-path attacker or network eavesdropper,
+      moderate skill) captures and reads the data in transit while it is unencrypted'
+    consequence: 'A competitor could build services upon the platform''s extracted data'
+    impact: 'tolerable'
+    likelihood: 'improbable'
+    treatment: 'accept'
+    notes: 'It is unknown to the team how the data currently appears in network traffic; needs verification.'
+
+  # ==========================================================================
+  # Cloud zone
+  # ==========================================================================
+
+  # --- Budget / spending caps ---
+  - id: 'R003'
+    title: 'Cloud operations stopped due to payment cap'
+    category: ['ra']
+    zone_edge_cloud: 'cloud'
+    conduit_or_exposure_area: 'Cloud operations'
+    phases: ['operation']
+    vulnerability: 'Hard payment cap without automatic scaling headroom'
+    threat:
+      'Unexpected load or a cost-driven denial-of-wallet (normal growth or malicious traffic driving spend) reaches
+      the hard payment cap, at which point the cloud platform is shut off'
+    consequence: 'Cloud operations are stopped, leading to service disruption and potential data loss'
+    impact: 'intolerable'
+    likelihood: 'possible'
+    treatment: 'accept'
+    existing_controls:
+      - 'Payment cap is monitored and alerts notify the team before the limit is reached'
+    impact_residual: 'intolerable'
+    likelihood_residual: 'improbable'
+    additional_controls: []
+
+  - id: 'R025'
+    title: 'Logging budget cap reached'
+    category: ['tre']
+    zone_edge_cloud: 'cloud'
+    conduit_or_exposure_area: 'Logging / observability'
+    phases: ['operation']
+    vulnerability: 'Logging has a hard budget cap with no overflow or rollover, so ingestion stops once the cap is hit'
+    threat: 'Log volume (from normal operation or a burst of errors or abuse) reaches the configured daily logging budget cap'
+    consequence: 'No logs for rest of the UTC day'
+    impact: 'acceptable'
+    likelihood: 'probable'
+    treatment: 'accept'
+
+  # --- Exposed public cloud endpoints ---
+  - id: 'R013'
+    title: 'Bot discovers URL and DDoSes containers'
+    category: ['ra']
+    zone_edge_cloud: 'cloud'
+    conduit_or_exposure_area: 'Cloud app endpoints'
+    phases: ['all']
+    vulnerability: 'Unprotected cloud apps'
+    threat:
+      'An automated bot (untargeted, low skill, scanning the internet) discovers an exposed endpoint URL and floods
+      the backing containers with requests'
+    consequence: 'Service degradation or unavailability of the affected cloud app while the containers are overwhelmed'
+    impact: 'acceptable'
+    likelihood: 'probable'
+    treatment: 'accept'
+
+  # --- Data confidentiality / leakage ---
+  - id: 'R007'
+    title: 'Unprotected dashboards discovered by competitor'
+    category: ['dc']
+    zone_edge_cloud: 'cloud'
+    conduit_or_exposure_area: 'Dashboards'
+    phases: ['all']
+    vulnerability: 'Dashboards are protected only by obscurity (unguessable URLs), with no authentication'
+    threat: 'A competitor or curious external party (low skill) discovers the
+      obscurity-protected dashboard pages that lack authentication'
+    consequence: 'Customer information is leaked'
+    impact: 'tolerable'
+    likelihood: 'possible'
+    treatment: 'accept'
+
+  # --- Admin / portal & data store access ---
+  - id: 'R022'
+    title: 'Unauthorized access to Azure portal'
+    category: ['iac']
+    zone_edge_cloud: 'cloud'
+    conduit_or_exposure_area: 'Azure portal'
+    phases: ['all']
+    vulnerability: 'Access to the Azure portal depends on credential security; compromised or over-privileged accounts grant broad control'
+    threat: 'An unauthorized actor (external attacker or former insider, moderate skill) gains access to the Azure
+      management portal via stolen, weak, or over-privileged credentials'
+    consequence: 'Shut down services, change settings, break everything'
+    impact: 'intolerable'
+    likelihood: 'improbable'
+    treatment: 'accept'
+
+  - id: 'R023'
+    title: 'Unauthorized access to databases'
+    category: ['dc']
+    zone_edge_cloud: 'cloud'
+    conduit_or_exposure_area: 'Databases'
+    phases: ['all']
+    vulnerability: 'Database access controls and network exposure are not sufficiently restricted'
+    threat: 'An unauthorized actor (external attacker or misused internal account, moderate skill) reaches the cloud
+      databases directly, e.g. via exposed connection strings or weak access control'
+    consequence: 'Data theft, manipulation'
+    impact: 'intolerable'
+    likelihood: 'improbable'
+    treatment: 'accept'
+    notes: 'Vulnerability left blank in source.'
+

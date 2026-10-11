@@ -1,85 +1,85 @@
 # yaml-language-server: $schema=../schemas-generated/json-schemas/risk-model.schema.json
 # Risk Assessment Model
-# Defines severity and probability scales for risk analysis
+# Defines the impact x likelihood scoring scale, resulting risk bands, and the
+# IEC 62443-3-3 foundational-requirement categories a risk can be tagged with.
 
-severity_levels:
-  catastrophic:
-    value: 5
-    description: "Complete system failure or major data breach"
+impact_levels:
+  intolerable:
+    value: 4
     color: "#8B0000"
-  critical:
-    value: 4
-    description: "Major disruption or significant data exposure"
+  undesirable:
+    value: 3
     color: "#DC143C"
-  moderate:
-    value: 3
-    description: "Partial disruption or limited data exposure"
+  tolerable:
+    value: 2
     color: "#FFA500"
-  minor:
-    value: 2
-    description: "Minor disruption with minimal impact"
-    color: "#FFD700"
-  negligible:
+  acceptable:
     value: 1
-    description: "Insignificant impact"
     color: "#90EE90"
+  unscored:
+    value: 0
+    color: "#D3D3D3"
 
-probability_levels:
-  almost_certain:
-    value: 5
-    description: "Expected to occur (>90%)"
-    frequency: "Multiple times per year"
-  likely:
+likelihood_levels:
+  frequent:
     value: 4
-    description: "Will probably occur (60-90%)"
-    frequency: "Once per year"
-  possible:
+  probable:
     value: 3
-    description: "Might occur (30-60%)"
-    frequency: "Once every 1-3 years"
-  unlikely:
+  possible:
     value: 2
-    description: "Could occur (10-30%)"
-    frequency: "Once every 3-10 years"
-  rare:
+  improbable:
     value: 1
-    description: "Exceptional circumstances (<10%)"
-    frequency: "Less than once in 10 years"
+  unscored:
+    value: 0
 
+# Risk score = impact value x likelihood value (range 1-16; 0 for unscored).
 risk_levels:
-  critical:
-    threshold: 15
-    description: "Immediate action required"
+  high:
+    threshold: 12
+    description: "Above the tolerable-risk line; implement controls immediately"
     color: "#8B0000"
     action: "Implement controls immediately"
-  high:
-    threshold: 10
-    description: "High priority"
+  serious:
+    threshold: 8
+    description: "Above the tolerable-risk line; requires a deliberate treatment decision"
     color: "#DC143C"
-    action: "Implement controls within 30 days"
+    action: "Implement controls with urgency"
   medium:
-    threshold: 6
-    description: "Medium priority"
+    threshold: 4
+    description: "At or below the tolerable-risk line"
     color: "#FFA500"
-    action: "Implement controls within 90 days"
+    action: "Implement controls in the standard cycle"
   low:
-    threshold: 3
-    description: "Monitor and review"
-    color: "#FFD700"
-    action: "Review annually"
-  very_low:
-    threshold: 0
+    threshold: 1
     description: "Acceptable risk"
     color: "#90EE90"
-    action: "Routine monitoring"
+    action: "Review annually"
+  unscored:
+    threshold: 0
+    description: "Risk not yet scored"
+    color: "#D3D3D3"
+    action: "Score the risk to determine treatment"
 
+# IEC 62443-3-3 foundational requirements (FRs) a risk may be tagged with.
 risk_categories:
-  - id: "data_security"
-    name: "Data Security"
-    description: "Risks related to data confidentiality and integrity"
-  - id: "access_control"
-    name: "Access Control"
-    description: "Risks related to unauthorized access"
-  - id: "software_integrity"
-    name: "Software Integrity"
-    description: "Risks related to software updates and tampering"
+  - id: "iac"
+    name: "Identification and Authentication Control"
+    description: "Risks related to identifying and authenticating users, devices, and software"
+  - id: "uc"
+    name: "Use Control"
+    description: "Risks related to authorization, enforcement, and auditing of allowed actions"
+  - id: "si"
+    name: "System Integrity"
+    description: "Risks related to tampering with or corrupting software, firmware, or data in transit"
+  - id: "dc"
+    name: "Data Confidentiality"
+    description: "Risks related to unauthorized disclosure of data at rest or in transit"
+  - id: "rdf"
+    name: "Restricted Data Flow"
+    description: "Risks related to network segmentation and unintended data flow between zones"
+  - id: "tre"
+    name: "Timely Response to Events"
+    description: "Risks related to detecting, logging, and responding to security events"
+  - id: "ra"
+    name: "Resource Availability"
+    description: "Risks related to denial of service and the availability of resources"

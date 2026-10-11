@@ -24,7 +24,7 @@ DOCS = {
 }
 
 WEBSITE_DIR = Path("website")
-DOCUSAURUS_GENERATOR = Path("website/scripts/generate_docs_from_yaml.py")
+DOCUSAURUS_GENERATOR = Path("website_generation_scripts/generate.py")
 
 YAML_FILES = [
     ("model/risk_model.yaml", RiskModel),
