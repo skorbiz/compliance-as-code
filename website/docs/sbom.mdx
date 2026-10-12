@@ -1,0 +1,38 @@
+---
+title: SBOM
+description: How this proof-of-concept treats the Software Bill of Materials (SBOM) required by the CRA.
+tags:
+  - cra
+  - sbom
+  - software bill of materials
+  - supply chain
+  - compliance
+---
+
+{/* Hidden search synonyms */}
+
+<span style={{ display: 'none' }}>
+  cra sbom software bill of materials dependencies supply chain security compliance cyclonedx spdx typst
+</span>
+
+The CRA requires manufacturers to maintain a **Software Bill of Materials (SBOM)** covering at least the top-level dependencies of the product.
+
+:::info[Scope of this proof-of-concept]
+This proof-of-concept focuses on rendering the SBOM as a **Typst document** — a human-readable, version-controlled
+artifact generated alongside the other compliance documents. It does **not** yet explore how to produce or maintain a
+fully **automated, machine-readable SBOM** (for example CycloneDX or SPDX) from the dependency graph.
+:::
+
+## Current approach
+
+The SBOM is authored as a Typst source file (`docs/sbom.typ`), which pulls auto-generated dependency data from
+`model/sbom.yaml` and combines it with a small set of manually listed components (compiler, runtime, operating
+system). Compiling it produces a PDF that can be shipped as part of the product documentation.
+
+## Not yet explored
+
+- Generating a standards-based, machine-readable SBOM (CycloneDX / SPDX) directly from the package manager.
+- Automatically keeping the SBOM in sync with the dependency lockfiles on every build.
+- Publishing and versioning the machine-readable SBOM alongside releases.
+
+These are natural next steps once the document-as-code workflow is established.

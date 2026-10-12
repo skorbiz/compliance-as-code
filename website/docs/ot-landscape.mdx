@@ -1,0 +1,195 @@
+---
+title: OT Landscape
+description: Operational technology landscape for an industrial site, modelled on IEC 62443-1-1 zones and levels as the basis for the CRA risk assessment.
+tags:
+  - cra
+  - ot
+  - operational technology
+  - iec 62443
+  - architecture
+  - security
+---
+
+{/* Hidden search synonyms */}
+
+<span style={{ display: 'none' }}>
+  ot landscape operational technology iec 62443 purdue model zones levels network segmentation plc scada risk assessment
+  nimbus gateway
+</span>
+
+The **OT landscape** describes the operational technology environment of an industrial customer site: the networks, zones, and equipment groups that make up the machine floor and its supporting services.
+
+:::info
+The OT landscape is not itself a CRA obligation. It is documented here because the [Risk Assessment](./risk-assessment.mdx) is derived from it — the zones, levels, and connections below define the attack surface and trust boundaries the risk assessment evaluates.
+:::
+
+## Reference model
+
+The diagram is intended to follow **IEC 62443-1-1**, using its zone-and-conduit concept and the level structure (Level 0 field devices, Level 1 control, Level 2 supervisory) to segment the environment.
+The diagram may not yet be fully compliant with IEC 62443-1-1. It is a living model that is intended to **converge towards compliance** as the OT environment and its documentation mature.
+
+## Landscape diagram
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "flowchart": {
+    "curve": "linear",
+    "nodeSpacing": 32,
+    "rankSpacing": 42,
+    "padding": 12
+  },
+  "themeVariables": {
+    "fontFamily": "Arial, sans-serif",
+    "fontSize": "14px",
+    "lineColor": "#52606d",
+    "primaryTextColor": "#17212b"
+  }
+}}%%
+
+flowchart TB
+  subgraph TOP["EXTERNAL NETWORKS"]
+    direction LR
+
+    subgraph SITE["Site network"]
+      direction TB
+      CDB[(Customer DB)]
+    end
+
+    subgraph OUTSIDE["Outside network · Cloud and remote connections"]
+      direction LR
+      MODEM[Direct modem]
+      CLOUD((Cloud))
+      WEB[Web service]
+      SUPPORT[Support and Upgrade]
+      GLOBE[(Central server)]
+
+      MODEM --- CLOUD
+      CLOUD --- WEB
+      CLOUD --- SUPPORT
+      CLOUD --- GLOBE
+    end
+  end
+
+  FW0{{Outside firewall}}
+
+  subgraph OT["OT LANDSCAPE"]
+    direction TB
+
+    subgraph L2["LEVEL 2 · Site common control and supervisory network"]
+      direction TB
+
+      SECURITY["MONITORING & SECURITY<br/>Monitoring services · Logs<br/>Intruder detection<br/>Log / traffic analysers · Update service"]
+      HUB["CENTRAL NETWORK SWITCH<br/><br/>Managed switch · TCP/IP · VLAN"]
+      NIMBUS["NIMBUS GATEWAY<br/><br/>Pivotal Level 2 integration point<br/>for services, data and machine networks<br/><br/>"]
+      LOCAL["LOCAL ACCESS & SUPERVISION<br/>Local monitors · Tablet VNC<br/>Smartphones via local Wi-Fi<br/>Operator access"]
+      FUTURE["FUTURE LEVEL 2 EXPANSION<br/><br/>Reserved for additional services,<br/>applications and integrations<br/><br/>"]
+
+      HUB --- SECURITY
+      HUB === NIMBUS
+      HUB --- LOCAL
+      HUB -. future connection .-> FUTURE
+    end
+
+    subgraph MACHINE_ROW["EQUIPMENT GROUPS"]
+      direction LR
+
+      subgraph GRPA["EQUIPMENT GROUP A"]
+        direction TB
+        GRPA_L1["LEVEL 1<br/>Firewall / VLAN · Core PLC and PC<br/>Message broker"]
+        GRPA_L0(["LEVEL 0<br/>Sensors and motors<br/>Ethernet · OPC UA · XMLRPC"])
+
+        GRPA_L1 --> GRPA_L0
+      end
+
+      subgraph GRPB["EQUIPMENT GROUP B"]
+        direction TB
+        GRPB_L1["LEVEL 1<br/>Firewall / VLAN · Core PLC<br/>Line machines · controllers"]
+        GRPB_L0(["LEVEL 0<br/>Sensors and motors · Field bus"])
+
+        GRPB_L1 --> GRPB_L0
+      end
+
+      subgraph GRPC["EQUIPMENT GROUP C"]
+        direction TB
+        GRPC_L1["LEVEL 1<br/>Firewall / VLAN · Core PLC and PC<br/>Managers · cameras · machine control<br/>Services · Managers · Machine control"]
+        GRPC_L0(["LEVEL 0<br/>Sensors and motors · Field bus"])
+
+        GRPC_L1 --> GRPC_L0
+      end
+
+      subgraph OLD["3RD-PARTY & LEGACY MACHINES"]
+        direction TB
+        OLD_L1["LEVEL 1<br/>Firewall · PLC translator<br/>I/O · RS232 · TCP/IP · MODBUS"]
+        OLD_L0(["LEVEL 0<br/>Legacy machine controllers<br/>Direct service access"])
+
+        OLD_L1 --> OLD_L0
+      end
+
+      GRPA ~~~ GRPB
+      GRPB ~~~ GRPC
+      GRPC ~~~ OLD
+    end
+  end
+
+  SITE --> FW0
+  OUTSIDE --> FW0
+  FW0 --> L2
+
+  L2 --> MACHINE_ROW
+
+  classDef database fill:#e5edf5,stroke:#54708c,stroke-width:1.5px,color:#17212b
+  classDef external fill:#f7d6d6,stroke:#b96b6b,stroke-width:1.5px,color:#17212b
+  classDef firewall fill:#e6ebef,stroke:#52606d,stroke-width:2px,color:#17212b
+  classDef level2 fill:#fff3c4,stroke:#c99a25,stroke-width:2px,color:#17212b,font-size:15px
+  classDef switch fill:#e1e7ed,stroke:#415b73,stroke-width:4px,color:#17212b,font-size:16px,font-weight:bold
+  classDef gateway fill:#d9ecff,stroke:#1769aa,stroke-width:4px,color:#0b3557,font-size:17px,font-weight:bold
+  classDef future fill:#fffdf2,stroke:#c99a25,stroke-width:2px,stroke-dasharray:7 5,color:#6b5a2b,font-size:15px
+  classDef machine fill:#fff0b3,stroke:#d19000,stroke-width:1.25px,color:#17212b,font-size:11px
+  classDef field fill:#fff8dc,stroke:#d19000,stroke-width:1.25px,color:#17212b,font-size:11px
+  classDef legacy fill:#a85f35,stroke:#743b20,stroke-width:1.25px,color:#ffffff,font-size:11px
+
+  class CDB,GLOBE database
+  class MODEM,CLOUD,WEB,SUPPORT external
+  class FW0 firewall
+  class SECURITY,LOCAL level2
+  class HUB switch
+  class NIMBUS gateway
+  class FUTURE future
+  class GRPA_L1,GRPB_L1,GRPC_L1 machine
+  class GRPA_L0,GRPB_L0,GRPC_L0 field
+  class OLD_L1,OLD_L0 legacy
+
+  style TOP fill:#ffffff,stroke:#9aa5b1,stroke-width:1px
+  style SITE fill:#eee4f2,stroke:#9b83a6,stroke-width:1.5px
+  style OUTSIDE fill:#f8dada,stroke:#c98383,stroke-width:1.5px
+  style OT fill:#ffffff,stroke:#5877a6,stroke-width:4px
+  style L2 fill:#fff7d8,stroke:#c6b273,stroke-width:3px
+  style MACHINE_ROW fill:#ffffff,stroke:#9aa5b1,stroke-width:1px
+  style GRPA fill:#ffd86e,stroke:#e24732,stroke-width:2.5px
+  style GRPB fill:#ffd86e,stroke:#e24732,stroke-width:2.5px
+  style GRPC fill:#ffd86e,stroke:#e24732,stroke-width:2.5px
+  style OLD fill:#b86738,stroke:#7f4426,stroke-width:2.5px,color:#ffffff
+```
+
+Level 2 is organized around the Nimbus Gateway and includes a reserved growth area. Each Level 1 + Level 0 column is compressed into a two-node summary.
+
+## How the levels map
+
+| Level       | Scope                                | Examples                                                           |
+| ----------- | ------------------------------------ | ------------------------------------------------------------------ |
+| **Level 2** | Site common control and supervisory  | Central switch, Nimbus Gateway, monitoring, local operator access  |
+| **Level 1** | Machine control per equipment group  | Core PLCs and PCs, firewalls/VLANs, machine services               |
+| **Level 0** | Field devices                        | Sensors and motors over field bus, OPC UA, Ethernet                |
+
+External networks (site network and outside cloud/remote connections) sit outside the OT boundary and reach the environment only through the **outside firewall**.
+
+## Remote access services
+
+There is (somewhat of) consensus in the CRA working group that a vendor remote-access/connect firewall should be viewed as a "remote access service" rather than as a firewall / security boundary.
+The vendor's own network should therefore be considered as part of an outside network.
+
+## Physical access
+
+The CRA working group has no consensus on the classification of physical access to the Ethernet network for the on-site machines.
+While Wi-Fi is typically considered a "remote access point" as malicious actors can reach it from outside the building, the Ethernet network is a bit more difficult to classify.

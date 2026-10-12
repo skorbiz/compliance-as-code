@@ -1,0 +1,109 @@
+---
+title: Incident Handling
+description: How a manufacturer reports actively exploited vulnerabilities and severe incidents as required by the CRA.
+tags:
+  - cra
+  - incident reporting
+  - vulnerability
+  - security
+  - compliance
+---
+
+{/* Hidden search synonyms */}
+
+<span style={{ display: 'none' }}>
+  cra incident reporting vulnerability disclosure enisa csirt notification security compliance
+</span>
+
+The CRA requires manufacturers to **report** actively exploited vulnerabilities and severe incidents to the relevant authorities and users within strict deadlines. This page sketches a generic incident reporting process for the Nimbus platform.
+
+:::info[Proof-of-concept]
+This page captures the **CRA obligations** and a **generic reporting workflow**. The concrete internal process —
+case-handling system, ownership, and escalation targets — is organisation-specific and intentionally left generic here.
+:::
+
+## Overview
+
+A CRA incident reporting procedure should cover receipt, registration, technical triage, the reporting decision, submission through the ENISA Single Reporting Platform (SRP), customer communication and documented closure. A tracked case in an internal case-handling system acts as the common case file.
+
+A workable procedure defines:
+
+- **Scope and triggers:** The products and conditions that may activate the Article 14 process.
+- **Deadlines and T0:** The awareness time T0 and controls for each required submission.
+- **Roles and responsibilities:** Ownership for triage, reporting, approvals and customer communication.
+- **Evidence and improvement:** What must be retained and reviewed before closure.
+
+The process is typically started by a ticket in the internal case-handling system tagged as CRA.
+
+## Legal basis and related standards
+
+The primary legal basis is [CRA Article 14 — Reporting obligations](./00-legislation/cra-part-article-14.mdx).
+
+The article applies from **11 September 2026**; the broader CRA applies from 11 December 2027.
+
+## Relevant links and references
+
+- [ENISA Single Reporting Platform (SRP)](https://www.enisa.europa.eu/news/the-cra-single-reporting-platform-is-launched)
+- [Danish reporting portal for security breaches](https://virk.dk/myndigheder/stat/SAMSIK/selvbetjening/Indberetning_af_brud_paa_sikkerhed/) (where applicable)
+
+:::note[Todo]
+
+A CI/CD check that external references and templates still resolve would keep this page from decaying into broken links before an incident ever occurs.
+
+:::
+
+## Operational workflow in short
+
+The table below summarizes a high-level flow. The four-hour and twelve-hour targets are illustrative internal escalation targets; the statutory reporting deadlines are listed separately below.
+
+| Stage                  | No. | Activity                                 | Primary output                                         |
+| ---------------------- | --: | ---------------------------------------- | ------------------------------------------------------ |
+| Initial activity       |   1 | Receive and record                       | Case ID, source, initial facts and T0                  |
+| Initial activity       |   2 | Preserve evidence and define scope       | Preserved evidence, affected product and initial scope |
+| Initial activity       |   3 | Triage within 4 hours                    | Initial classification, owner and escalation           |
+| Early warning          |   4 | Decide and escalate within 12 hours      | Reporting decision and deadline plan                   |
+| Early warning          |   5 | Submit early warning within 24 hours     | SRP submission and receipt                             |
+| Technical analysis     |   6 | Expand the technical analysis            | Impact, evidence and mitigation assessment             |
+| Technical analysis     |   7 | Submit full notification within 72 hours | Full SRP notification and receipt                      |
+| Technical analysis     |   8 | Inform affected users                    | Verified user communication and guidance               |
+| Correction and closure |   9 | Implement and verify the correction      | Corrective measure and verification record             |
+| Correction and closure |  10 | Submit the final report and close        | Final report, lessons learned and closure record       |
+
+## Triggers and classifications
+
+| Trigger                          | Minimum test                                                                                                                                                                                                                                      | Handling                                                      | Reference                                                                                     |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Actively exploited vulnerability | Reliable evidence that a malicious actor has exploited a vulnerability in a system without the system owner's permission.                                                                                                                         | Start deadline control and escalate immediately.              | [CRA Article 3(42) and Article 14(1)–(2)](https://eur-lex.europa.eu/eli/reg/2024/2847/oj/eng) |
+| Severe incident                  | The incident negatively affects, or may negatively affect, the product's ability to protect the availability, authenticity, integrity or confidentiality of sensitive or important data or functions, or may introduce or execute malicious code. | Start deadline control and escalate immediately.              | [CRA Article 14(3)–(5)](https://eur-lex.europa.eu/eli/reg/2024/2847/oj/eng)                   |
+| Uncertainty                      | The reporting obligation cannot be ruled out during the triage window.                                                                                                                                                                            | Treat the case as a potential Article 14 case until resolved. |                                                                                               |
+| Out of scope                     | No active exploitation or severe incident, supported by a documented rationale.                                                                                                                                                                   | Continue the normal process.                                  |                                                                                               |
+
+Cases may originate from customer reports, monitoring, security testing, suppliers or any other source. The pipeline applies to every event that meets the defined criteria, regardless of how it was initially reported.
+
+## Reporting timeline
+
+T0 is the time the manufacturer becomes aware of the actively exploited vulnerability or severe incident. Reports must be submitted without undue delay and no later than the deadlines below.
+
+| Case type                        | Step              | Latest deadline                                                             | Minimum output                                                                                    | Reference                                                                               |
+| -------------------------------- | ----------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Both                             | Early warning     | Within 24 hours of awareness                                                | Known basic information, including the affected product and any indication of malicious activity. | [CRA Article 14(2)(a) and 14(4)(a)](https://eur-lex.europa.eu/eli/reg/2024/2847/oj/eng) |
+| Both                             | Full notification | Within 72 hours of awareness                                                | Product, nature, initial impact assessment, and corrective or mitigating actions.                 | [CRA Article 14(2)(b) and 14(4)(b)](https://eur-lex.europa.eu/eli/reg/2024/2847/oj/eng) |
+| Actively exploited vulnerability | Final report      | No later than 14 days after a corrective or mitigating measure is available | Vulnerability description, severity and impact, malicious actor if known, and corrective measure. | [CRA Article 14(2)(c)](https://eur-lex.europa.eu/eli/reg/2024/2847/oj/eng)              |
+| Severe incident                  | Final report      | Within one month after the 72-hour incident notification                    | Incident description, severity and impact, likely threat or root cause, and mitigation measures.  | [CRA Article 14(4)(c)](https://eur-lex.europa.eu/eli/reg/2024/2847/oj/eng)              |
+
+## Roles and responsibilities
+
+| Role                         | Responsibility                                                               |
+| ---------------------------- | ---------------------------------------------------------------------------- |
+| Service desk / Helpdesk      | Creates the case, records T0 and alerts the technical owner.                 |
+| Technical lead               | Validates the product, component, impact, evidence, mitigation and solution. |
+| CRA manager                  | Owns classification, deadlines, decisions, KPIs and closure.                 |
+| Assigned representative      | Submits and updates the SRP notification and stores references and receipts. |
+| Management / Compliance      | Approves external content without delaying legal deadlines.                  |
+| Customer communication owner | Coordinates verified communication with affected users.                      |
+
+:::note[Internal process intentionally generic]
+A real deployment also needs an up-to-date **contact and access card** (who to call, which systems to reach, and how)
+so the right people can act within the CRA deadlines. The specific contacts, systems, and templates are
+organisation-specific and are not reproduced in this proof-of-concept.
+:::
