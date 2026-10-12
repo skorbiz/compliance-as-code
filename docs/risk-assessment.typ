@@ -57,7 +57,7 @@
 ]
 
 #pagebreak()
-#outline(title: [Contents], indent: auto)
+#outline(title: [Contents], indent: auto, depth: 2)
 #pagebreak()
 
 = Executive Summary
@@ -142,7 +142,7 @@ Every risk records an explicit treatment decision: *undecided* (no decision yet)
     
     [*Risk ID:*], [#risk.id],
     [*Category:*], [#let category = risk.at("category", default: ())
-      if category.len() > 0 [#category.map((id) => category_names.at(id, default: id)).join(", ")] else [—]],
+      #if category.len() > 0 [#category.map((id) => category_names.at(id, default: id)).join(", ")] else [—]],
     [*Zone:*], [#upper(risk.zone_edge_cloud)],
     [*Conduit / exposure area:*], [#risk.conduit_or_exposure_area],
     [*Phases:*], [#risk.phases.map(pretty).join(", ")],
