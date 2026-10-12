@@ -35,12 +35,12 @@ RISK_MODEL_SOURCE = MODEL_DIR / "risk_model.yaml"
 RISKS_SOURCE = MODEL_DIR / "risks.yaml"
 
 WEBSITE_DOCS = ROOT / "website" / "docs"
-# Partials imported by risk-assessment.mdx via `import X from './_generated/...'`.
+# Partials imported by 02-product-security/risk-assessment.mdx via `import X from '../_generated/...'`.
 RISKS_OUT = WEBSITE_DOCS / "_generated" / "risks"
 MODEL_OUT = WEBSITE_DOCS / "_generated" / "risk-model.mdx"
 # Detail pages live outside `_generated/` (Docusaurus excludes `_`-prefixed
 # folders from routing) so each risk gets a real, linkable doc page.
-DETAILS_OUT = WEBSITE_DOCS / "risks"
+DETAILS_OUT = WEBSITE_DOCS / "02-product-security" / "risks"
 
 # Color emoji + Docusaurus admonition type per risk level. This is presentation
 # only (risk_model.yaml has no notion of emoji/admonition); keyed by the level
@@ -177,7 +177,7 @@ def _view(scale: Scale, risk: Risk) -> RiskView:
     category_names = [scale.category_names.get(category, _pretty(category)) for category in risk.category]
     return RiskView(
         risk=risk,
-        doc_url=f"/risks/{risk.id.lower()}",
+        doc_url=f"/product-security/risks/{risk.id.lower()}",
         category_name=", ".join(category_names) if category_names else "—",
         initial=_assess(scale, risk.impact, risk.likelihood),
         residual=residual,

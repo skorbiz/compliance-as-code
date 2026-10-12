@@ -12,8 +12,8 @@ tags:
 
 <span style={{ display: 'none' }}>cra risk assessment threat model mitigation vulnerability security compliance</span>
 
-import RiskIndex from './_generated/risks/index.mdx';
-import RiskModelSummary from './_generated/risk-model.mdx';
+import RiskIndex from '../_generated/risks/index.mdx';
+import RiskModelSummary from '../_generated/risk-model.mdx';
 
 ## Executive summary
 
@@ -21,12 +21,12 @@ Todo
 
 ## Risk assessment methodology
 
-Nimbus follows the risk-assessment workflow of **[IEC 62443-3-2:2020](./01-standards/03-iec-62443-3-2-2020.mdx)**.
-The workflow starts by defining the [Product Context](./product-context.mdx) — the system under consideration (SUC),
+Nimbus follows the risk-assessment workflow of **[IEC 62443-3-2:2020](../01-standards/03-iec-62443-3-2-2020.mdx)**.
+The workflow starts by defining the [Product Context](../03-product-context/product-context.mdx) — the system under consideration (SUC),
 its security perimeter, zones, conduits, and access points — and then performs the initial and detailed risk
 assessment over that context.
 
-See the [Standards](./01-standards/README.mdx) folder for the underlying standards.
+See the [Standards](../01-standards/README.mdx) folder for the underlying standards.
 
 ### Risk scoring matrix
 
@@ -38,7 +38,7 @@ Risk score is defined as **impact × likelihood**, generated from the scale defi
 ### Risk treatment
 
 For every risk we record an explicit treatment decision, following
-**[IEC 62443-3-2:2020](./01-standards/03-iec-62443-3-2-2020.mdx)** ZCR 5.7 and ZCR 5.11 (compare the risk against
+**[IEC 62443-3-2:2020](../01-standards/03-iec-62443-3-2-2020.mdx)** ZCR 5.7 and ZCR 5.11 (compare the risk against
 tolerable risk, then decide). Our **tolerable-risk line** is the 🟡 medium band above: risks at or below it are
 tolerable, while serious and above call for a deliberate treatment decision.
 

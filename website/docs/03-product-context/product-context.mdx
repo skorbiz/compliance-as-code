@@ -18,12 +18,12 @@ tags:
 </span>
 
 The **product context** describes _what_ we are protecting and _where its boundaries lie_. Under
-[IEC 62443-3-2:2020](./01-standards/03-iec-62443-3-2-2020.mdx), this is the first step of the risk assessment
+[IEC 62443-3-2:2020](../01-standards/03-iec-62443-3-2-2020.mdx), this is the first step of the risk assessment
 (**ZCR 1 — Identify the system under consideration**): before any threat can be scored, the system, its perimeter,
 and its access points must be defined.
 
 :::info
-This page defines the **scope** of the [Risk Assessment](./risk-assessment.mdx): the intended use, foreseeable misuse,
+This page defines the **scope** of the [Risk Assessment](../02-product-security/risk-assessment.mdx): the intended use, foreseeable misuse,
 security perimeter, and access points of the system under consideration (SUC). The [OT Landscape](./ot-landscape.mdx)
 models the wider industrial environment the edge connects to; the SUC itself is narrower — the Nimbus edge device and
 its tenant cloud, defined below.
@@ -65,7 +65,7 @@ Intended users and their access are described in [Access points](#access-points)
 
 Per the CRA and IEC 62443-3-2, the context must also capture **foreseeable misuse** — non-intended use that a
 reasonable person could expect. This section seeds the misuse scenarios that feed the
-[Risk Assessment](./risk-assessment.mdx).
+[Risk Assessment](../02-product-security/risk-assessment.mdx).
 
 The main foreseeable misuse today is a **loss of availability caused by restricting the edge's internet
 connectivity**. The customer operates its own network, so its IT can — intentionally or not — block or throttle the
@@ -106,7 +106,7 @@ An **access point** is any logical or physical point where a data flow crosses t
 | OpenTelemetry / Grafana connection | Cloud | Telemetry flows from the cloud (and edge) to Grafana Cloud over OTLP.                     |
 
 :::note
-The **open NATS network** discussed in the [Risk Assessment](./risk-assessment.mdx) is an _unintended_ exposure
+The **open NATS network** discussed in the [Risk Assessment](../02-product-security/risk-assessment.mdx) is an _unintended_ exposure
 rather than a designed access point. It is tracked there as a risk; it is noted here only for cross-reference.
 :::
 
